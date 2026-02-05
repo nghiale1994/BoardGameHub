@@ -4,7 +4,7 @@ BoardGame Hub
 
 This repository contains design-first artifacts and DSLs for a frontend-only P2P boardgame hub.
 
-NOTE: This project is for learning/research purposes only and is not intended for production use.
+NOTE: This project is for learning/research purposes only and is not intended for production uses.
 
 See `docs/ai/README.md` for required AI workflow and design update rules.
 
