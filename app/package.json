@@ -12,6 +12,7 @@
     "test": "vitest",
     "test:unit": "vitest run",
     "test:e2e": "playwright test",
+    "test:minimal": "npm run test:unit && npm run test:e2e",
     "test:e2e:ui": "playwright test --ui",
     "peerjs:server": "peerjs --port 9000 --path /peerjs --key peerjs",
     "test:e2e:peerjs": "node ./scripts/run-e2e-peerjs.mjs",

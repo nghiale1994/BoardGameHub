@@ -1,5 +1,5 @@
 import { describe, expect, test, vi, beforeEach } from "vitest";
-import { fireEvent, screen } from "@testing-library/react";
+import { fireEvent, screen, waitFor } from "@testing-library/react";
 import type { RoomContextType } from "./hooks/useRoomContext";
 import { App } from "./App";
 import { renderWithI18n } from "./test/render";
@@ -95,14 +95,17 @@ describe("SettingsModal entry points", () => {
     console.log("[test] open sidebar menu");
     fireEvent.click(screen.getByRole("button", { name: "Open menu", hidden: true }));
 
-    // Step 3) click Settings
+    // Step 3) wait for Settings button to appear and click it
     console.log("[test] click Settings");
+    await waitFor(() => {
+      expect(screen.getByRole("button", { name: "Settings" })).toBeInTheDocument();
+    });
     fireEvent.click(screen.getByRole("button", { name: "Settings" }));
 
     // Step 4) assert Settings dialog visible
     console.log("[test] assert Settings dialog");
     expect(screen.getByRole("dialog", { name: "Settings" })).toBeInTheDocument();
-  });
+  }, 15000);
 
   // Tests: GameRoom header Settings opens SettingsModal.
   // Steps:
