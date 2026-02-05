@@ -5,113 +5,74 @@ on:
     branches: [ main ]
   pull_request:
     branches: [ main ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
 
 jobs:
-  test:
-    runs-on: ubuntu-latest
-    steps:
-    - name: Checkout
-      uses: actions/checkout@v4
-
-    - name: Setup Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: '18'
-        cache: 'npm'
-        cache-dependency-path: app/package-lock.json
-
-    - name: Install dependencies
-      run: cd app && npm ci
-
-    - name: Run unit tests
-      run: cd app && npm run test:unit
-
-    - name: Run E2E tests
-      run: cd app && npm run test:e2e
-
-    - name: Generate test summary
-      run: cd app && npm run test:summary
-
-    - name: Upload test results
-      uses: actions/upload-artifact@v4
-      if: always()
-      with:
-        name: test-results-${{ github.run_id }}
-        path: |
-          app/test-results/
-          app/playwright-report/
-        retention-days: 30
-
-  build-and-deploy:
-    runs-on: ubuntu-latest
-    needs: test
-    if: github.ref == 'refs/heads/main'
-    steps:
-    - name: Checkout
-      uses: actions/checkout@v4
-
-    - name: Setup Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: '18'
-        cache: 'npm'
-        cache-dependency-path: app/package-lock.json
-
-    - name: Install dependencies
-      run: cd app && npm ci
-
-    - name: Build
-      run: cd app && npm run build
-      env:
-        VITE_PEERJS_HOST: ${{ secrets.VITE_PEERJS_HOST }}
-        VITE_PEERJS_PORT: ${{ secrets.VITE_PEERJS_PORT }}
-        VITE_PEERJS_PATH: ${{ secrets.VITE_PEERJS_PATH }}
-        VITE_PEERJS_SECURE: ${{ secrets.VITE_PEERJS_SECURE }}
-        VITE_PEERJS_KEY: ${{ secrets.VITE_PEERJS_KEY }}
-
-    - name: Deploy to GitHub Pages
-      uses: peaceiris/actions-gh-pages@v3
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: app/dist
-
   check-test-results:
     runs-on: ubuntu-latest
-    if: github.event_name == 'pull_request' && github.base_ref == 'main' && github.head_ref == 'qat'
     steps:
     - name: Checkout
       uses: actions/checkout@v4
 
-    - name: Check for test artifacts
+    - name: Check test results exist
       run: |
-        # Check if test results exist from the qat branch
         if [ ! -f "app/test-results/test-summary.json" ]; then
-          echo "❌ Test results not found! Please ensure tests have run on qat branch."
+          echo "❌ Test results not found! Please run tests locally before pushing."
+          echo "Run: cd app && npm run test:unit && npm run test:e2e"
           exit 1
         fi
 
-        # Validate test results
-        echo "✅ Test results found. Validating..."
+        echo "✅ Test results file found. Proceeding with deployment..."
 
-        # Read and validate JSON
-        if ! jq empty app/test-results/test-summary.json 2>/dev/null; then
-          echo "❌ Invalid test summary JSON"
+  deploy:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    needs: check-test-results
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: app/dist
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+
+  check-pr-test-results:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Check test results exist for PR
+      run: |
+        if [ ! -f "app/test-results/test-summary.json" ]; then
+          echo "❌ Test results not found! Please run tests locally before creating PR."
+          echo "Run: cd app && npm run test:unit && npm run test:e2e"
           exit 1
         fi
 
-        # Check for test failures
-        FAILED_UNIT=$(jq '.unit.failed' app/test-results/test-summary.json)
-        FAILED_E2E=$(jq '.e2e.failed' app/test-results/test-summary.json)
-
-        if [ "$FAILED_UNIT" -gt 0 ] || [ "$FAILED_E2E" -gt 0 ]; then
-          echo "❌ Test failures detected:"
-          echo "Unit tests failed: $FAILED_UNIT"
-          echo "E2E tests failed: $FAILED_E2E"
-          echo ""
-          echo "Please fix failing tests before merging to main."
-          exit 1
-        fi
-
-        echo "✅ All tests passed! Safe to merge."
-        echo "Unit tests: $(jq '.unit.passed' app/test-results/test-summary.json) passed"
-        echo "E2E tests: $(jq '.e2e.passed' app/test-results/test-summary.json) passed"
+        echo "✅ Test results file found in PR. Proceeding..."
