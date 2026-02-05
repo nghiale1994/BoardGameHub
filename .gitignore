@@ -10,7 +10,7 @@ ENV/
 *.env.*
 
 # Build outputs
-dist/
+# dist/
 build/
 out/
 .next/
