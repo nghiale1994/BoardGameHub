@@ -1,0 +1,18 @@
+{
+  "timestamp": "2026-02-05T09:26:08.360Z",
+  "commit": "57d225414a94fc995ee3b849373cc7bf556e5bbc",
+  "runId": "local",
+  "unit": {
+    "passed": 71,
+    "failed": 0,
+    "total": 71,
+    "duration": 1474
+  },
+  "e2e": {
+    "passed": 96,
+    "failed": 0,
+    "skipped": 344,
+    "total": 96,
+    "duration": 84225.04500000001
+  }
+}
