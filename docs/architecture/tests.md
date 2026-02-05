@@ -7,7 +7,7 @@ Changelog:
 
 # Architecture Tests (Index)
 
-This file aggregates proposed tests for architecture design under `docs/architecture/`.
+This file aggregates proposed tests for architecture designs under `docs/architecture/`.
 
 ## Unit tests
 
