@@ -1,0 +1,1183 @@
+<!DOCTYPE html>
+<!-- NOTE: AI must read docs/ai/README.md before modifying this file. -->
+<!-- Last updated: 2026-02-02 | GameRoom Mockup: PC uses Tablet layout + Mobile layout. Move log lines + Settings modal (language/theme/chat settings) + chat filtering. Tablet uses Board fixed + right side sheet with tabs (Participants/Chat) + collapse toggle. Added copy-invite-link button near Room ID. Added unread chat badges (PC/Tablet chat tab + mobile chat button). Participants label uses "Thành viên" with total count. Added self marker suffix "(tôi)" for the current user in participants list. PC/Tablet chat tab: message list scrolls within ~70% height; composer pinned bottom. -->
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BoardGame Hub - GameRoom Mockup (v2)</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --color-primary: #ff3b81;
+      --color-primary-light: #ff6fa3;
+      --color-secondary: #ffd200;
+      --color-surface: #ffffff;
+      --color-surface-soft: #fff6f9;
+      --color-text: #0b1020;
+      --color-text-muted: #4b5563;
+      --color-border: rgba(11,16,32,0.08);
+      --color-shadow: rgba(11,16,32,0.14);
+      --bg: linear-gradient(180deg, #fff7fb 0%, #fffef6 100%);
+
+      --radius: 12px;
+      --space-1: 0.5rem;
+      --space-2: 1rem;
+      --space-3: 1.5rem;
+      --space-4: 2rem;
+    }
+
+    body.dark-mode {
+      --color-primary: #FF6FA3;
+      --color-primary-light: #FF95C0;
+      --color-secondary: #FFB800;
+      --color-surface: #121212;
+      --color-surface-soft: #1e1e1e;
+      --color-text: #FFFFFF;
+      --color-text-muted: #B0B0B0;
+      --color-border: rgba(255,255,255,0.08);
+      --color-shadow: rgba(0, 0, 0, 0.6);
+      --bg: #0B0B10;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--color-text);
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    .hidden { display: none !important; }
+
+    /* Device selector */
+    .device-selector {
+      position: fixed;
+      top: var(--space-2);
+      right: var(--space-2);
+      z-index: 1000;
+      display: flex;
+      gap: var(--space-1);
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius);
+      padding: 0.4rem;
+      box-shadow: 0 6px 20px var(--color-shadow);
+    }
+
+    .device-btn {
+      padding: 0.4rem 0.7rem;
+      border: 1px solid var(--color-border);
+      background: transparent;
+      color: var(--color-text);
+      border-radius: calc(var(--radius) * 0.7);
+      cursor: pointer;
+      font-weight: 800;
+      font-size: 0.85rem;
+    }
+
+    .device-btn.active {
+      background: var(--color-primary);
+      border-color: var(--color-primary);
+      color: white;
+    }
+
+    /* Common header */
+    .header {
+      height: 70px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 var(--space-3);
+      background: var(--color-surface);
+      border-bottom: 1px solid var(--color-border);
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      min-width: 0;
+    }
+
+    .game-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: calc(var(--radius) * 1.2);
+      background: var(--color-secondary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+      color: #08121a;
+    }
+
+    .game-name {
+      font-size: 1.1rem;
+      font-weight: 900;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .room-info {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: var(--color-text-muted);
+      font-weight: 700;
+      font-size: 0.9rem;
+      white-space: nowrap;
+    }
+
+    .status-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 999px;
+      background: #10b981;
+      box-shadow: 0 0 0 4px rgba(16,185,129,0.14);
+    }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    .btn {
+      border: 1px solid var(--color-border);
+      background: var(--color-surface);
+      color: var(--color-text);
+      padding: 0.55rem 0.85rem;
+      border-radius: calc(var(--radius) * 0.8);
+      cursor: pointer;
+      font-weight: 900;
+    }
+
+    .btn.primary {
+      background: var(--color-primary);
+      border-color: var(--color-primary);
+      color: white;
+    }
+
+    .btn.icon {
+      width: 40px;
+      height: 40px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0;
+    }
+
+    .btn.icon.copy-invite {
+      width: 34px;
+      height: 34px;
+      font-size: 0.95rem;
+      font-weight: 900;
+    }
+
+    /* Layout containers */
+    .layout {
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .panel {
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius);
+      box-shadow: 0 6px 18px var(--color-shadow);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .panel-header {
+      padding: 0.9rem 1rem;
+      border-bottom: 1px solid var(--color-border);
+      font-weight: 900;
+      background: var(--color-surface);
+    }
+
+    .panel-body {
+      padding: 0.9rem 1rem;
+      overflow: auto;
+      flex: 1;
+    }
+
+    /* Participants */
+    .section-title {
+      font-size: 0.85rem;
+      color: var(--color-text-muted);
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      margin: 0.5rem 0 0.75rem;
+    }
+
+    .participant {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.55rem 0;
+      border-bottom: 1px solid rgba(0,0,0,0.05);
+    }
+
+    body.dark-mode .participant {
+      border-bottom-color: rgba(255,255,255,0.06);
+    }
+
+    .dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 999px;
+    }
+
+    .dot.red { background: #ef4444; }
+    .dot.blue { background: #3b82f6; }
+    .dot.green { background: #10b981; }
+    .dot.purple { background: #8b5cf6; }
+
+    .participant-name { font-weight: 900; }
+    .participant-status { color: var(--color-text-muted); font-size: 0.85rem; font-weight: 700; }
+
+    .dimmed { opacity: 0.7; }
+
+    /* Board */
+    .board {
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius);
+      box-shadow: 0 6px 18px var(--color-shadow);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .phase-badge {
+      position: absolute;
+      top: var(--space-2);
+      left: var(--space-2);
+      background: var(--color-primary);
+      color: white;
+      padding: 0.35rem 0.65rem;
+      border-radius: 999px;
+      font-weight: 900;
+      font-size: 0.85rem;
+    }
+
+    .board-placeholder {
+      height: 100%;
+      min-height: 300px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 0.25rem;
+      color: var(--color-text-muted);
+      font-weight: 800;
+    }
+
+    /* Chat */
+    .chat-messages {
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+    }
+
+    .message {
+      max-width: 100%;
+      display: flex;
+      gap: 0.4rem;
+      flex-wrap: wrap;
+    }
+
+    .message .sender {
+      font-weight: 900;
+    }
+
+    .message .text {
+      color: var(--color-text);
+      font-weight: 700;
+    }
+
+    /* System message: plain line (no bubble) */
+    .message.system {
+      color: var(--color-text-muted);
+      font-style: italic;
+    }
+
+    .message.system .text {
+      color: var(--color-text-muted);
+    }
+
+    /* Move log: plain line (no bubble) */
+    .message.move {
+      color: var(--color-text-muted);
+    }
+
+    .message.move .text {
+      color: var(--color-text-muted);
+      font-weight: 800;
+    }
+
+    .chat-input {
+      display: flex;
+      gap: 0.6rem;
+      padding: 0.8rem 1rem;
+      border-top: 1px solid var(--color-border);
+      background: var(--color-surface);
+    }
+
+    .chat-input input {
+      flex: 1;
+      padding: 0.65rem 0.85rem;
+      border-radius: calc(var(--radius) * 0.8);
+      border: 1px solid var(--color-border);
+      background: var(--color-surface-soft);
+      color: var(--color-text);
+      font-weight: 700;
+    }
+
+    /* Tablet/PC chat sizing: messages ~70% height, composer pinned */
+    #tab-chat.panel-body {
+      padding: 0;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    #tab-chat .chat-messages {
+      flex: 0 0 70%;
+      min-height: 0;
+      overflow: auto;
+      padding: 0.9rem 1rem;
+    }
+
+    #tab-chat .chat-input {
+      margin-top: auto;
+    }
+
+    /* Tablet */
+    .tablet-body {
+      flex: 1;
+      display: grid;
+      grid-template-columns: 1fr 360px;
+      gap: var(--space-2);
+      padding: var(--space-2);
+      overflow: hidden;
+    }
+
+    .tablet-body.side-collapsed {
+      grid-template-columns: 1fr;
+    }
+
+    .tablet-body.side-collapsed #tabletSideSheet {
+      display: none;
+    }
+
+    .tablet-side-toggle {
+      position: absolute;
+      top: var(--space-2);
+      right: var(--space-2);
+      width: 40px;
+      height: 40px;
+      border-radius: calc(var(--radius) * 0.9);
+      border: 1px solid var(--color-border);
+      background: var(--color-surface);
+      color: var(--color-text);
+      cursor: pointer;
+      box-shadow: 0 8px 22px var(--color-shadow);
+      font-weight: 900;
+      z-index: 5;
+    }
+
+    .tabs {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.6rem;
+      padding: 0.75rem;
+      border-bottom: 1px solid var(--color-border);
+      background: var(--color-surface);
+    }
+
+    .tab-group {
+      display: flex;
+      gap: 0.6rem;
+      flex: 1;
+    }
+
+    .tab {
+      flex: 1;
+      padding: 0.6rem;
+      border-radius: calc(var(--radius) * 0.8);
+      border: 1px solid var(--color-border);
+      background: var(--color-surface);
+      cursor: pointer;
+      font-weight: 900;
+      color: var(--color-text);
+    }
+
+    .tab.active {
+      background: var(--color-primary);
+      border-color: var(--color-primary);
+      color: white;
+    }
+
+    .tab .tab-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 18px;
+      height: 18px;
+      padding: 0 6px;
+      margin-left: 0.35rem;
+      border-radius: 999px;
+      background: #d32f2f;
+      color: white;
+      font-size: 0.75rem;
+      font-weight: 900;
+      line-height: 1;
+    }
+
+    .pill {
+      position: relative;
+    }
+
+    .pill .pill-badge {
+      position: absolute;
+      top: -6px;
+      right: 10px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 18px;
+      height: 18px;
+      padding: 0 6px;
+      border-radius: 999px;
+      background: #d32f2f;
+      color: white;
+      font-size: 0.75rem;
+      font-weight: 900;
+      line-height: 1;
+      box-shadow: 0 6px 18px var(--color-shadow);
+    }
+
+    /* Mobile */
+    .mobile-shell {
+      position: relative;
+      flex: 1;
+      overflow: hidden;
+      padding: var(--space-2);
+    }
+
+    .mobile-board {
+      height: calc(100% - 70px);
+      border-radius: var(--radius);
+    }
+
+    .mobile-bottombar {
+      position: absolute;
+      left: var(--space-2);
+      right: var(--space-2);
+      bottom: var(--space-2);
+      height: 54px;
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: 999px;
+      box-shadow: 0 10px 30px var(--color-shadow);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 0.6rem;
+      gap: 0.5rem;
+      z-index: 30;
+    }
+
+    .pill {
+      flex: 1;
+      height: 40px;
+      border-radius: 999px;
+      border: 1px solid var(--color-border);
+      background: var(--color-surface);
+      cursor: pointer;
+      font-weight: 900;
+      color: var(--color-text);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.4rem;
+    }
+
+    .pill.primary {
+      background: var(--color-primary);
+      border-color: var(--color-primary);
+      color: white;
+    }
+
+    .mobile-chat-overlay {
+      position: absolute;
+      inset: 0;
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius);
+      box-shadow: 0 10px 30px var(--color-shadow);
+      display: none;
+      flex-direction: column;
+      overflow: hidden;
+      z-index: 40;
+    }
+
+    .mobile-chat-overlay.visible {
+      display: flex;
+    }
+
+    .mobile-chat-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.85rem 1rem;
+      border-bottom: 1px solid var(--color-border);
+      background: var(--color-surface);
+      font-weight: 900;
+    }
+
+    .mobile-sheet {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: -80vh;
+      height: 70vh;
+      background: var(--color-surface);
+      border-top: 1px solid var(--color-border);
+      border-radius: var(--radius) var(--radius) 0 0;
+      box-shadow: 0 -10px 30px var(--color-shadow);
+      transition: bottom 0.25s ease;
+      z-index: 45;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .mobile-sheet.visible {
+      bottom: 0;
+    }
+
+    .sheet-handle {
+      width: 60px;
+      height: 6px;
+      border-radius: 999px;
+      background: rgba(0,0,0,0.18);
+      margin: 0.75rem auto 0.25rem;
+    }
+
+    body.dark-mode .sheet-handle {
+      background: rgba(255,255,255,0.18);
+    }
+
+    /* Settings modal */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(11,16,32,0.45);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 2000;
+    }
+
+    .modal {
+      width: min(92vw, 42rem);
+      max-height: min(90vh, 44rem);
+      overflow: auto;
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius);
+      box-shadow: 0 14px 50px var(--color-shadow);
+      padding: var(--space-3);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-2);
+    }
+
+    .modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-weight: 900;
+      font-size: 1.1rem;
+    }
+
+    .modal-section {
+      border: 1px solid var(--color-border);
+      background: var(--color-surface-soft);
+      border-radius: calc(var(--radius) * 0.9);
+      padding: var(--space-2);
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+    }
+
+    .modal-section-title {
+      font-size: 0.85rem;
+      color: var(--color-text-muted);
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+    }
+
+    .settings-row {
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+      font-size: 0.95rem;
+      color: var(--color-text);
+      font-weight: 800;
+    }
+
+    .settings-row select {
+      padding: 0.6rem 0.8rem;
+      border-radius: calc(var(--radius) * 0.8);
+      border: 1px solid var(--color-border);
+      background: var(--color-surface);
+      color: var(--color-text);
+      font-weight: 900;
+    }
+
+    .toggle-group {
+      display: flex;
+      gap: 0.6rem;
+    }
+
+    .toggle-btn {
+      flex: 1;
+      border: 1px solid var(--color-border);
+      background: var(--color-surface);
+      color: var(--color-text);
+      padding: 0.65rem 0.8rem;
+      border-radius: calc(var(--radius) * 0.85);
+      cursor: pointer;
+      font-weight: 900;
+    }
+
+    .toggle-btn.active {
+      background: var(--color-primary);
+      border-color: var(--color-primary);
+      color: white;
+    }
+
+    .checkbox-row {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      font-size: 0.95rem;
+      color: var(--color-text);
+      font-weight: 800;
+      user-select: none;
+    }
+
+    .checkbox-row input { width: 18px; height: 18px; }
+
+    .modal-footer {
+      display: flex;
+      justify-content: flex-end;
+      gap: 0.75rem;
+    }
+
+    .hint {
+      font-size: 0.85rem;
+      color: var(--color-text-muted);
+      font-weight: 700;
+    }
+
+    .toast {
+      position: fixed;
+      left: 50%;
+      bottom: 18px;
+      transform: translateX(-50%);
+      background: rgba(11,16,32,0.92);
+      color: #fff;
+      padding: 10px 14px;
+      border-radius: 999px;
+      font-weight: 900;
+      font-size: 0.9rem;
+      box-shadow: 0 10px 30px rgba(11,16,32,0.25);
+      z-index: 2000;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 160ms ease;
+    }
+
+    .toast.show { opacity: 1; }
+  </style>
+</head>
+<body>
+  <div class="device-selector">
+    <button class="device-btn active" onclick="showLayout('tablet')">PC/Tablet</button>
+    <button class="device-btn" onclick="showLayout('mobile')">Mobile</button>
+  </div>
+
+  <!-- Tablet -->
+  <div class="layout" id="layout-tablet">
+    <div class="header">
+      <div class="header-left">
+        <div class="game-icon">♠</div>
+        <div class="game-name">Spades</div>
+        <div class="room-info"><span class="status-dot"></span>Room: ABCD-1234</div>
+        <button class="btn icon copy-invite" onclick="copyInviteLink('ABCD-1234')" title="Copy invite link">🔗</button>
+      </div>
+      <div class="header-right">
+        <button class="btn">Khán giả</button>
+        <button class="btn">Rời</button>
+        <button class="btn icon" onclick="openSettingsModal()">⚙️</button>
+      </div>
+    </div>
+
+    <div class="tablet-body" id="tabletBody">
+      <div class="board">
+        <div class="phase-badge">Playing</div>
+        <button class="tablet-side-toggle" id="tabletSideToggle" onclick="toggleTabletSideSheet()" aria-label="Toggle side sheet">⟨</button>
+        <div class="board-placeholder">
+          <div style="font-size: 1.5rem;">♠ ♥ ♦ ♣</div>
+          <div>Game Board Area</div>
+        </div>
+      </div>
+
+      <div class="panel" id="tabletSideSheet">
+        <div class="tabs">
+          <div class="tab-group">
+            <button class="tab active" onclick="switchTab('participants')">Thành viên (5)</button>
+            <button class="tab" onclick="switchTab('chat')">Chat <span class="tab-badge" id="tabletChatBadge">2</span></button>
+          </div>
+        </div>
+        <div class="panel-body" id="tab-participants">
+          <div class="section-title">Người chơi</div>
+          <div class="participant">
+            <div class="dot red"></div>
+            <div>
+              <div class="participant-name">Alice (tôi) ⭐</div>
+              <div class="participant-status">🟢 Online</div>
+            </div>
+          </div>
+          <div class="participant">
+            <div class="dot blue"></div>
+            <div>
+              <div class="participant-name">Bob (lượt)</div>
+              <div class="participant-status">🟢 Online</div>
+            </div>
+          </div>
+          <div class="participant">
+            <div class="dot green"></div>
+            <div>
+              <div class="participant-name">Carol</div>
+              <div class="participant-status">🟡 Reconnecting</div>
+            </div>
+          </div>
+
+          <div class="section-title" style="margin-top: 1rem;">Khán giả</div>
+          <div class="participant">
+            <div class="dot purple dimmed"></div>
+            <div>
+              <div class="participant-name">👁️ David</div>
+              <div class="participant-status">🟢 Online</div>
+            </div>
+          </div>
+          <div class="participant" style="border-bottom:none;">
+            <div class="dot red dimmed"></div>
+            <div>
+              <div class="participant-name">👁️ Emma</div>
+              <div class="participant-status">🟢 Online</div>
+            </div>
+          </div>
+        </div>
+        <div class="panel-body hidden" id="tab-chat">
+          <div class="chat-messages">
+            <div class="message system" data-message-type="system"><span class="text">Hệ thống • Carol đã tham gia phòng</span></div>
+            <div class="message" data-message-type="user"><span class="sender">Alice:</span><span class="text">Ai muốn chơi ván tiếp?</span></div>
+            <div class="message move" data-message-type="move"><span class="text">19:42 • Alice đặt quân vào ô B3</span></div>
+            <div class="message" data-message-type="user"><span class="sender">Bob:</span><span class="text">Okee!</span></div>
+            <div class="message move" data-message-type="move"><span class="text">19:43 • Bob rút 1 lá bài (Deck)</span></div>
+            <div class="message system" data-message-type="system"><span class="text">Hệ thống • David chuyển sang khán giả</span></div>
+          </div>
+          <div class="chat-input">
+            <input type="text" placeholder="Nhập tin nhắn..." />
+            <button class="btn primary">↪</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Mobile -->
+  <div class="layout hidden" id="layout-mobile">
+    <div class="header">
+      <div class="header-left">
+        <div class="game-icon">♠</div>
+        <div class="game-name">Spades</div>
+        <div class="room-info"><span class="status-dot"></span>ABCD-1234</div>
+        <button class="btn icon copy-invite" onclick="copyInviteLink('ABCD-1234')" title="Copy invite link">🔗</button>
+      </div>
+      <div class="header-right">
+        <button class="btn">Rời</button>
+      </div>
+    </div>
+
+    <div class="mobile-shell">
+      <div class="board mobile-board">
+        <div class="phase-badge">Playing</div>
+        <div class="board-placeholder">
+          <div style="font-size: 1.5rem;">♠ ♥ ♦ ♣</div>
+          <div>Game Board Area</div>
+        </div>
+      </div>
+
+      <div class="mobile-bottombar">
+        <button class="pill primary" onclick="toggleMobileChat()">💬 <span>Chat</span><span class="pill-badge" id="mobileChatBadge">2</span></button>
+        <button class="pill" onclick="toggleBottomSheet()">👥 <span>Thành viên</span></button>
+        <button class="pill" onclick="openSettingsModal()">⚙️</button>
+      </div>
+
+      <div class="mobile-chat-overlay" id="mobileChat">
+        <div class="mobile-chat-header">
+          <span>Chat</span>
+          <button class="btn icon" style="width: 36px; height: 36px;" onclick="closeMobileChat()">✕</button>
+        </div>
+        <div class="panel-body" style="padding: 1rem;">
+          <div class="chat-messages">
+            <div class="message system" data-message-type="system"><span class="text">Hệ thống • Carol đã tham gia phòng</span></div>
+            <div class="message" data-message-type="user"><span class="sender">Alice:</span><span class="text">Ai muốn chơi ván tiếp?</span></div>
+            <div class="message move" data-message-type="move"><span class="text">19:42 • Alice đặt quân vào ô B3</span></div>
+            <div class="message" data-message-type="user"><span class="sender">Bob:</span><span class="text">Okee!</span></div>
+            <div class="message move" data-message-type="move"><span class="text">19:43 • Bob rút 1 lá bài (Deck)</span></div>
+            <div class="message system" data-message-type="system"><span class="text">Hệ thống • David chuyển sang khán giả</span></div>
+          </div>
+        </div>
+        <div class="chat-input">
+          <input type="text" placeholder="Nhập tin nhắn..." />
+          <button class="btn primary">↪</button>
+        </div>
+      </div>
+
+      <div class="mobile-sheet" id="bottomSheet" aria-label="Participants bottom sheet">
+        <div class="sheet-handle"></div>
+        <div class="panel-header" style="border-bottom:none;">Thành viên</div>
+        <div class="panel-body">
+          <div class="section-title">Người chơi</div>
+          <div class="participant">
+            <div class="dot red"></div>
+            <div>
+              <div class="participant-name">Alice (tôi) ⭐</div>
+              <div class="participant-status">🟢 Online</div>
+            </div>
+          </div>
+          <div class="participant" style="border-bottom:none;">
+            <div class="dot blue"></div>
+            <div>
+              <div class="participant-name">Bob (lượt)</div>
+              <div class="participant-status">🟢 Online</div>
+            </div>
+          </div>
+
+          <div class="section-title" style="margin-top: 1rem;">Khán giả (2)</div>
+          <div class="participant">
+            <div class="dot purple dimmed"></div>
+            <div>
+              <div class="participant-name">👁️ David</div>
+              <div class="participant-status">🟢 Online</div>
+            </div>
+          </div>
+          <div class="participant" style="border-bottom:none;">
+            <div class="dot red dimmed"></div>
+            <div>
+              <div class="participant-name">👁️ Emma</div>
+              <div class="participant-status">🟢 Online</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SettingsModal (Shared) -->
+  <div class="modal-overlay" id="settingsModal" aria-label="Settings modal">
+    <div class="modal">
+      <div class="modal-header">
+        <span>Cài đặt</span>
+        <button class="btn icon" style="width: 40px; height: 40px;" onclick="closeSettingsModal()">✕</button>
+      </div>
+
+      <div class="modal-section">
+        <div class="modal-section-title">Chọn ngôn ngữ</div>
+        <div class="settings-row">
+          <label for="settingsLanguage">Ngôn ngữ</label>
+          <select id="settingsLanguage" onchange="setLanguage(this.value)">
+            <option value="vi">Tiếng Việt (VI)</option>
+            <option value="en">English (EN)</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="modal-section">
+        <div class="modal-section-title">Giao diện</div>
+        <div class="toggle-group">
+          <button class="toggle-btn" id="themeLight" onclick="setTheme('light')">☀️ Sáng</button>
+          <button class="toggle-btn" id="themeDark" onclick="setTheme('dark')">🌙 Tối</button>
+        </div>
+      </div>
+
+      <div class="modal-section">
+        <div class="modal-section-title">Cài đặt chat</div>
+        <label class="checkbox-row">
+          <input type="checkbox" id="showConversation" onchange="setChatSettingsFromModal()" checked />
+          Hiện hội thoại trong chat
+        </label>
+        <label class="checkbox-row">
+          <input type="checkbox" id="showGameEvents" onchange="setChatSettingsFromModal()" checked />
+          Hiện sự kiện game trong chat
+        </label>
+        <div class="hint">System messages luôn hiển thị.</div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn primary" onclick="closeSettingsModal()">Đóng</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast" class="toast" role="status" aria-live="polite">Đã sao chép link mời!</div>
+
+  <script>
+    const PREF_LANG_KEY = 'bg_pref_lang';
+    const PREF_THEME_KEY = 'bg_pref_theme';
+    const PREF_CHAT_KEY = 'bg_pref_chat_settings';
+
+    let toastTimer = null;
+    function showToast(message) {
+      const el = document.getElementById('toast');
+      if (!el) return;
+      el.textContent = message;
+      el.classList.add('show');
+      if (toastTimer) window.clearTimeout(toastTimer);
+      toastTimer = window.setTimeout(() => el.classList.remove('show'), 1800);
+    }
+
+    function copyInviteLink(roomId) {
+      const inviteUrl = `https://boardgamehub.com/i/${roomId}`;
+
+      if (navigator && navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(inviteUrl)
+          .then(() => showToast('Đã sao chép link mời!'))
+          .catch(() => showToast(`Link mời: ${inviteUrl}`));
+        return;
+      }
+
+      // Fallback for older browsers
+      try {
+        const ta = document.createElement('textarea');
+        ta.value = inviteUrl;
+        ta.setAttribute('readonly', '');
+        ta.style.position = 'fixed';
+        ta.style.top = '0';
+        ta.style.left = '0';
+        ta.style.opacity = '0';
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+        showToast('Đã sao chép link mời!');
+      } catch {
+        showToast(`Link mời: ${inviteUrl}`);
+      }
+    }
+
+    function showLayout(layout) {
+      document.getElementById('layout-tablet').classList.toggle('hidden', layout !== 'tablet');
+      document.getElementById('layout-mobile').classList.toggle('hidden', layout !== 'mobile');
+
+      document.querySelectorAll('.device-btn').forEach(btn => btn.classList.remove('active'));
+      if (event && event.target) event.target.classList.add('active');
+
+      // Close mobile overlays when switching layouts
+      closeMobileChat();
+      closeBottomSheet();
+
+      // Tablet side sheet defaults to open
+      if (layout === 'tablet') {
+        const body = document.getElementById('tabletBody');
+        const btn = document.getElementById('tabletSideToggle');
+        if (body) body.classList.remove('side-collapsed');
+        if (btn) btn.textContent = '⟨';
+      }
+    }
+
+    function switchTab(tab) {
+      const participantsTab = document.getElementById('tab-participants');
+      const chatTab = document.getElementById('tab-chat');
+      const buttons = document.querySelectorAll('#layout-tablet .tab');
+
+      buttons.forEach(b => b.classList.remove('active'));
+      if (tab === 'participants') {
+        buttons[0].classList.add('active');
+        participantsTab.classList.remove('hidden');
+        chatTab.classList.add('hidden');
+        return;
+      }
+
+      buttons[1].classList.add('active');
+      participantsTab.classList.add('hidden');
+      chatTab.classList.remove('hidden');
+    }
+
+    function toggleTabletSideSheet() {
+      const body = document.getElementById('tabletBody');
+      const btn = document.getElementById('tabletSideToggle');
+      if (!body || !btn) return;
+
+      const willCollapse = !body.classList.contains('side-collapsed');
+      body.classList.toggle('side-collapsed', willCollapse);
+      btn.textContent = willCollapse ? '⟩' : '⟨';
+    }
+
+    function toggleMobileChat() {
+      const el = document.getElementById('mobileChat');
+      const willOpen = !el.classList.contains('visible');
+      if (willOpen) {
+        closeBottomSheet();
+        el.classList.add('visible');
+      } else {
+        el.classList.remove('visible');
+      }
+    }
+
+    function closeMobileChat() {
+      const el = document.getElementById('mobileChat');
+      if (el) el.classList.remove('visible');
+    }
+
+    function toggleBottomSheet() {
+      const sheet = document.getElementById('bottomSheet');
+      const willOpen = !sheet.classList.contains('visible');
+      if (willOpen) {
+        closeMobileChat();
+        sheet.classList.add('visible');
+      } else {
+        sheet.classList.remove('visible');
+      }
+    }
+
+    function closeBottomSheet() {
+      const sheet = document.getElementById('bottomSheet');
+      if (sheet) sheet.classList.remove('visible');
+    }
+
+    function getChatSettings() {
+      try {
+        const raw = localStorage.getItem(PREF_CHAT_KEY);
+        if (!raw) return { showConversation: true, showGameEvents: true };
+        const parsed = JSON.parse(raw);
+        return {
+          showConversation: parsed.showConversation !== false,
+          showGameEvents: parsed.showGameEvents !== false,
+        };
+      } catch {
+        return { showConversation: true, showGameEvents: true };
+      }
+    }
+
+    function setChatSettings(next) {
+      localStorage.setItem(PREF_CHAT_KEY, JSON.stringify({
+        showConversation: next.showConversation !== false,
+        showGameEvents: next.showGameEvents !== false,
+      }));
+      applyChatVisibility();
+    }
+
+    function applyChatVisibility() {
+      const prefs = getChatSettings();
+      document.querySelectorAll('[data-message-type]').forEach(el => {
+        const type = el.getAttribute('data-message-type');
+        if (type === 'system') {
+          el.style.display = '';
+          return;
+        }
+        if (type === 'user') {
+          el.style.display = prefs.showConversation ? '' : 'none';
+          return;
+        }
+        if (type === 'move') {
+          el.style.display = prefs.showGameEvents ? '' : 'none';
+          return;
+        }
+        el.style.display = '';
+      });
+    }
+
+    function setChatSettingsFromModal() {
+      const showConversation = document.getElementById('showConversation')?.checked !== false;
+      const showGameEvents = document.getElementById('showGameEvents')?.checked !== false;
+      setChatSettings({ showConversation, showGameEvents });
+    }
+
+    function setLanguage(lang, silent = false) {
+      localStorage.setItem(PREF_LANG_KEY, lang);
+      document.documentElement.lang = lang;
+      const select = document.getElementById('settingsLanguage');
+      if (select) select.value = lang;
+      if (!silent) {
+        // Mock only: keep UI Vietnamese-first.
+      }
+    }
+
+    function syncThemeButtons(theme) {
+      const isDark = theme === 'dark';
+      document.getElementById('themeLight')?.classList.toggle('active', !isDark);
+      document.getElementById('themeDark')?.classList.toggle('active', isDark);
+    }
+
+    function setTheme(theme) {
+      localStorage.setItem(PREF_THEME_KEY, theme);
+      document.body.classList.toggle('dark-mode', theme === 'dark');
+      syncThemeButtons(theme);
+    }
+
+    function openSettingsModal() {
+      const overlay = document.getElementById('settingsModal');
+      if (!overlay) return;
+      overlay.style.display = 'flex';
+
+      const lang = localStorage.getItem(PREF_LANG_KEY) || 'vi';
+      const theme = localStorage.getItem(PREF_THEME_KEY) || 'light';
+      const chat = getChatSettings();
+
+      document.getElementById('settingsLanguage').value = lang;
+      document.getElementById('showConversation').checked = chat.showConversation;
+      document.getElementById('showGameEvents').checked = chat.showGameEvents;
+      syncThemeButtons(theme);
+    }
+
+    function closeSettingsModal() {
+      const overlay = document.getElementById('settingsModal');
+      if (!overlay) return;
+      overlay.style.display = 'none';
+    }
+
+    (function initPrefs() {
+      const lang = localStorage.getItem(PREF_LANG_KEY) || 'vi';
+      const theme = localStorage.getItem(PREF_THEME_KEY) || 'light';
+      setLanguage(lang, true);
+      setTheme(theme);
+      setChatSettings(getChatSettings());
+      applyChatVisibility();
+
+      const overlay = document.getElementById('settingsModal');
+      if (overlay) {
+        overlay.addEventListener('click', (e) => {
+          if (e.target === overlay) closeSettingsModal();
+        });
+      }
+    })();
+  </script>
+</body>
+</html>

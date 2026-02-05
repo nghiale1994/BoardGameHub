@@ -1,0 +1,289 @@
+# NOTE: AI must read docs/ai/README.md before modifying this file.
+# i18n Configuration for BoardGame Hub
+# Updated: 2026-02-01
+# Changelog:
+# - 2026-01-30: Added nav.menu_toggle for accessible menu button label.
+# - 2026-01-31: Renamed LanguageToggle translation group to language_selection.
+# - 2026-02-01: Updated language selection label copy to match design docs.
+
+languages:
+  vi:
+    name: Tiếng Việt
+    nativeName: Việt Nam
+    direction: ltr
+    priority: 1  # Default language
+  en:
+    name: English
+    nativeName: English
+    direction: ltr
+    priority: 2
+
+detection:
+  # Browser locale detection strategy
+  method: browser_locale
+  order:
+    - localStorage (saved preference)
+    - browser locale (navigator.language)
+    - fallback to vi
+
+translations:
+  # Homepage sections
+  homepage:
+    welcome:
+      vi: "Chào mừng đến với BoardGame Hub"
+      en: "Welcome to BoardGame Hub"
+    welcome_back:
+      vi: "Chào mừng quay lại, {name}"
+      en: "Welcome back, {name}"
+    subtitle:
+      vi: "Nơi kết nối người chơi board game trực tuyến"
+      en: "Connect with online board game players"
+
+  # WelcomeSection component
+  welcome_section:
+    enter_name:
+      vi: "Nhập tên của bạn"
+      en: "Enter your name"
+    name_placeholder:
+      vi: "Tên người chơi"
+      en: "Player name"
+    save:
+      vi: "Lưu"
+      en: "Save"
+    edit:
+      vi: "Sửa"
+      en: "Edit"
+
+  # JoinRoom component
+  join_room:
+    title:
+      vi: "Tham gia phòng"
+      en: "Join room"
+    paste_url_placeholder:
+      vi: "Dán liên kết phòng"
+      en: "Paste room URL"
+    join_button:
+      vi: "Tham gia"
+      en: "Join"
+    invalid_url:
+      vi: "Liên kết phòng không hợp lệ"
+      en: "Invalid room URL"
+
+  # GameList component
+  game_list:
+    title:
+      vi: "Danh sách tất cả game"
+      en: "All available games"
+    prev:
+      vi: "Trước"
+      en: "Prev"
+    next:
+      vi: "Tiếp"
+      en: "Next"
+    page_indicator:
+      vi: "Trang {current} / {total}"
+      en: "Page {current} of {total}"
+    no_games:
+      vi: "Không có game nào"
+      en: "No games available"
+
+  # Sidebar component
+  sidebar:
+    title:
+      vi: "BoardGame Hub"
+      en: "BoardGame Hub"
+    recent_rooms:
+      vi: "Phòng gần đây"
+      en: "Recent rooms"
+    settings:
+      vi: "Cài đặt"
+      en: "Settings"
+    help:
+      vi: "Trợ giúp"
+      en: "Help"
+    about:
+      vi: "Giới thiệu"
+      en: "About"
+
+  # LanguageSelection component
+  language_selection:
+    label:
+      vi: "Chọn ngôn ngữ"
+      en: "Language selection"
+    vietnamese:
+      vi: "Tiếng Việt"
+      en: "Vietnamese"
+    english:
+      vi: "Tiếng Anh"
+      en: "English"
+
+  # ThemeToggle component
+  theme_toggle:
+    label:
+      vi: "Chế độ giao diện"
+      en: "Theme"
+    light:
+      vi: "Sáng"
+      en: "Light"
+    dark:
+      vi: "Tối"
+      en: "Dark"
+
+  # RecentGames component
+  recent_games:
+    title:
+      vi: "Phòng gần đây"
+      en: "Recent rooms"
+    resume:
+      vi: "Tiếp tục"
+      en: "Resume"
+    clear_all:
+      vi: "Xóa tất cả"
+      en: "Clear all"
+    no_recent:
+      vi: "Chưa có phòng nào"
+      en: "No recent rooms"
+    time_ago:
+      vi: "{time} trước"
+      en: "{time} ago"
+    player_count:
+      vi: "{count} người chơi"
+      en: "{count} players"
+
+  # Room creation
+  create_room:
+    title:
+      vi: "Tạo phòng mới"
+      en: "Create new room"
+    select_game:
+      vi: "Chọn game"
+      en: "Select game"
+    search_games:
+      vi: "Tìm kiếm game..."
+      en: "Search games..."
+    create_button:
+      vi: "Tạo"
+      en: "Create"
+
+  # Room created modal
+  room_created:
+    title:
+      vi: "Phòng đã được tạo"
+      en: "Room created"
+    share_url_label:
+      vi: "Link mời"
+      en: "Share URL"
+    copy_button:
+      vi: "Sao chép"
+      en: "Copy"
+    copy_success:
+      vi: "Đã sao chép link mời!"
+      en: "Link copied!"
+    helper_text:
+      vi: "Gửi link này để mời bạn bè vào phòng chơi."
+      en: "Share this link to invite friends."
+    enter_room:
+      vi: "Vào phòng"
+      en: "Enter room"
+    later:
+      vi: "Để sau"
+      en: "Later"
+
+  # GameRoom
+  gameroom:
+    me:
+      vi: "tôi"
+      en: "me"
+
+  # Join room
+  join_room:
+    title:
+      vi: "Tham gia phòng"
+      en: "Join room"
+    paste_url:
+      vi: "Dán liên kết phòng"
+      en: "Paste room URL"
+    join_button:
+      vi: "Tham gia"
+      en: "Join"
+
+  # Recent games
+  recent_games:
+    title:
+      vi: "Các game gần đây"
+      en: "Recent games"
+    resume:
+      vi: "Tiếp tục"
+      en: "Resume"
+
+  # CreateRoomModal settings
+  create_room_modal:
+    essentials:
+      vi: "Thiết yếu"
+      en: "Essentials"
+    players:
+      vi: "Số người chơi"
+      en: "Players"
+    playtime:
+      vi: "Thời lượng"
+      en: "Playtime"
+    settings_button:
+      vi: "Cài đặt"
+      en: "Settings"
+    back:
+      vi: "Quay lại"
+      en: "Back"
+    create:
+      vi: "Tạo phòng"
+      en: "Create Room"
+
+  # Settings
+  settings:
+    title:
+      vi: "Cài đặt"
+      en: "Settings"
+    language:
+      vi: "Ngôn ngữ"
+      en: "Language"
+    theme:
+      vi: "Chế độ giao diện"
+      en: "Theme"
+    dark:
+      vi: "Tối"
+      en: "Dark"
+    light:
+      vi: "Sáng"
+      en: "Light"
+    clear_data:
+      vi: "Xóa dữ liệu"
+      en: "Clear data"
+    clear_data_confirm:
+      vi: "Bạn chắc chắn muốn xóa tất cả dữ liệu?"
+      en: "Are you sure you want to clear all data?"
+
+  # Navigation
+  nav:
+    menu_toggle:
+      vi: "Mở menu"
+      en: "Open menu"
+    settings:
+      vi: "Cài đặt"
+      en: "Settings"
+    help:
+      vi: "Trợ giúp"
+      en: "Help"
+    about:
+      vi: "Về chúng tôi"
+      en: "About"
+
+  # Errors
+  errors:
+    connection_failed:
+      vi: "Kết nối thất bại"
+      en: "Connection failed"
+    invalid_url:
+      vi: "Liên kết phòng không hợp lệ"
+      en: "Invalid room URL"
+    game_not_found:
+      vi: "Game không tìm thấy"
+      en: "Game not found"

@@ -1,0 +1,68 @@
+<!-- NOTE: AI must read docs/ai/README.md before modifying this file. -->
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Palette Preview — Dark</title>
+  <style>
+    :root{
+      --color-primary:#FF6FA3;
+      --color-secondary:#FFB800;
+      --color-accent:#00A5C7;
+      --color-accent-2:#6F4BFF;
+      --color-surface:#121212;
+      --color-bg:#0B0B10;
+      --color-text-primary:#FFFFFF;
+      --color-text-secondary:#B0B0B0;
+      --on-primary:#FFFFFF;
+      --radius:12px;
+      --pad:16px;
+    }
+    body{font-family:Inter,system-ui,Segoe UI,Roboto,Arial; background:var(--color-bg); color:var(--color-text-primary); padding:32px}
+    .wrap{max-width:980px;margin:0 auto}
+    h1{font-size:1.5rem;margin-bottom:8px}
+    .swatches{display:flex;gap:12px;flex-wrap:wrap;margin:16px 0}
+    .swatch{width:120px;height:80px;border-radius:8px;box-shadow:0 6px 18px rgba(0,0,0,0.6);display:flex;align-items:center;justify-content:center;font-weight:600}
+    .label{margin-top:8px;font-size:0.9rem;color:var(--color-text-secondary)}
+    .sample-row{display:flex;gap:12px;align-items:center;margin-top:18px}
+    .btn{padding:10px 14px;border-radius:10px;border:none;cursor:pointer;font-weight:700}
+    .card{background:var(--color-surface);border-radius:var(--radius);padding:16px;box-shadow:0 8px 24px rgba(0,0,0,0.6);width:240px}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>Dark Palette Preview</h1>
+    <p>Dark-mode variant of the canonical palette. Demonstrates accessible accents on dark surfaces.</p>
+
+    <div class="swatches">
+      <div>
+        <div class="swatch" style="background:var(--color-primary);color:var(--on-primary)">Primary</div>
+        <div class="label">--color-primary (dark)</div>
+      </div>
+      <div>
+        <div class="swatch" style="background:var(--color-secondary);color:#08121A">Secondary</div>
+        <div class="label">--color-secondary</div>
+      </div>
+      <div>
+        <div class="swatch" style="background:var(--color-accent);color:#08121A">Accent</div>
+        <div class="label">--color-accent</div>
+      </div>
+      <div>
+        <div class="swatch" style="background:var(--color-accent-2);color:#fff">Accent-2</div>
+        <div class="label">--color-accent-2</div>
+      </div>
+    </div>
+
+    <div class="sample-row">
+      <button class="btn" style="background:var(--color-primary);color:var(--on-primary)">Primary CTA</button>
+      <button class="btn" style="background:var(--color-secondary);color:#08121A">Secondary</button>
+      <div class="card">
+        <div style="font-weight:700;margin-bottom:8px">Game Card Title</div>
+        <div style="color:var(--color-text-secondary);font-size:0.9rem">2 — 6 players • 30–45 min</div>
+      </div>
+    </div>
+
+  </div>
+</body>
+</html>

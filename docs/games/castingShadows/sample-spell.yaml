@@ -1,0 +1,28 @@
+# Casting Shadows - Spell Cards
+
+spells:
+  fireball:
+    id: "fireball"
+    name: "Fireball"
+    level: 1
+    type: "attack"
+    collectionCost:
+      - type: "gem"
+        color: "red"
+        amount: 1
+      - type: "orb"
+        color: "red"
+        amount: 1
+    castingCost:
+      - type: "gem"
+        color: "red"
+        amount: 1
+    range: "adjacent"
+    targetType: "enemy"
+    effect:
+      type: "damage"
+      baseDamage: 3
+      scalingDamage: 2
+      maxExtraResources: 2
+    description: "Deal 3 damage to an enemy in range. Spend up to 2 additional Red Gems to deal +2 damage each."
+    flavorText: "A blazing sphere of fire that engulfs its target."

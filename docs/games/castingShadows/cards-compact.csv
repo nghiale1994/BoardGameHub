@@ -1,0 +1,4 @@
+id,name,level,type,collection_cost,casting_cost,range,target_type,effect_type,damage,conversion,description,flavor_text
+fireball,Fireball,1,attack,"gem:red:1,orb:red:1","gem:red:1",adjacent,enemy,damage,"base:3,scaling:2,max_extra:2",,Deal 3 damage to an enemy in range. Spend up to 2 additional Red Gems to deal +2 damage each.,A blazing sphere of fire that engulfs its target.
+lightning-storm,Lightning Storm,2,attack,"gem:blue:2,orb:blue:1,spell_level:1","gem:blue:2",range2,hex,damage,"base:4,scaling:1,max_extra:3",,Deal 4 damage to all enemies on target hex. Spend up to 3 additional Blue Gems to deal +1 damage each.,Crackling bolts of lightning rain down upon the battlefield.
+resource-converter,Resource Converter,1,conversion,"gem:purple:1","orb:purple:1",self,self,convert,,"from:curseCrystal:1,to:shadowFragment:1",Convert 1 Cursed Crystal into 1 Shadow Fragment.,Harness the chaotic energy of cursed crystals.

@@ -1,0 +1,14 @@
+{
+  "id": "sweep-tests",
+  "description": "Sweep repository for test files and normalize test headers according to `enforce-test-comments` plus produce a report of remaining non-conforming files.",
+  "trigger": "command:sweepTests",
+  "inputs": {
+    "root": { "type": "string", "description": "Root folder to scan" },
+    "fix": { "type": "boolean", "description": "Whether to apply fixes automatically" }
+  },
+  "outputs": {
+    "report": { "type": "object", "description": "Summary of changes & non-conforming files" }
+  },
+  "permissions": ["repo:read", "repo:modify-tests"],
+  "successCriteria": "All test files are either conformed or included in the report with recommended action."
+}

@@ -1,0 +1,14 @@
+{
+  "id": "run-unit-tests",
+  "description": "Run the repository's unit test suite (Vitest) for targeted files or the whole suite and report results.",
+  "trigger": "command:runUnitTests",
+  "inputs": {
+    "files": { "type": "string[]", "description": "List of file paths or globs to run" },
+    "bailOnFailure": { "type": "boolean", "description": "Stop early if a test fails" }
+  },
+  "outputs": {
+    "result": { "type": "object", "description": "Pass/fail summary and logs" }
+  },
+  "permissions": ["ci:run-tests"],
+  "successCriteria": "All requested tests pass or failures are reported with logs for triage."
+}

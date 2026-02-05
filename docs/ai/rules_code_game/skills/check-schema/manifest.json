@@ -1,0 +1,12 @@
+{
+  "name": "check-schema",
+  "description": "Check that domain events have required schemaVersion and namespacing",
+  "parameters": {
+    "filePath": {
+      "type": "string",
+      "description": "Path to the game code file to check"
+    }
+  },
+  "dryRun": true,
+  "output": "Schema validation report"
+}

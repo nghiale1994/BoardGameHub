@@ -1,0 +1,58 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --color-primary: #ff3b81;
+  --color-primary-light: #ff6fa3;
+  --color-secondary: #ffd200;
+  --color-accent: #00d1ff;
+  --color-accent-2: #8b5cf6;
+  --color-surface: #ffffff;
+  --color-surface-variant: #fff6f9;
+  --color-bg: #fff7fb;
+  --color-text-primary: #0b1020;
+  --color-text-secondary: #4b5563;
+  --color-border: rgba(11, 16, 32, 0.06);
+  --color-shadow: rgba(11, 16, 32, 0.12);
+  --on-primary: #0b1020;
+}
+
+.theme-dark {
+  --color-primary: #ff6fa3;
+  --color-primary-light: #ff95c0;
+  --color-secondary: #ffb800;
+  --color-accent: #00a5c7;
+  --color-accent-2: #6f4bff;
+  --color-surface: #121212;
+  --color-surface-variant: #1e1e1e;
+  --color-bg: #0b0b10;
+  --color-text-primary: #ffffff;
+  --color-text-secondary: #b0b0b0;
+  --color-border: rgba(255, 255, 255, 0.06);
+  --color-shadow: rgba(0, 0, 0, 0.6);
+  --on-primary: #ffffff;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--color-bg);
+  color: var(--color-text-primary);
+  font-family: "Inter", "Segoe UI", system-ui, -apple-system, sans-serif;
+  font-size: clamp(0.95rem, 1vw, 1.05rem);
+  line-height: 1.5;
+}
+
+a {
+  color: inherit;
+}

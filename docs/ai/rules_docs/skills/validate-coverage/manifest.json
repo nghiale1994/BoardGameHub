@@ -1,0 +1,12 @@
+{
+  "name": "validate-coverage",
+  "description": "Validate that feature design docs have required Coverage Checklists",
+  "parameters": {
+    "filePath": {
+      "type": "string",
+      "description": "Path to the design.md file to validate"
+    }
+  },
+  "dryRun": true,
+  "output": "Validation result with missing items"
+}

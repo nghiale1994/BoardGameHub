@@ -1,0 +1,12 @@
+{
+  "name": "check-preface",
+  "description": "Check that design/mockup/DSL files have the required preface instructing AI to read docs/ai/README.md",
+  "parameters": {
+    "filePaths": {
+      "type": "array",
+      "description": "List of file paths to check"
+    }
+  },
+  "dryRun": true,
+  "output": "List of files missing preface"
+}

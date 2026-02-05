@@ -1,0 +1,31 @@
+# NOTE: AI must read docs/ai/README.md before modifying this file.
+# Version: 2026-01-31
+# Changelog:
+# - 2026-01-31: Removed settings from items_order (moved to GameRoom for game customization; language/theme remain in sidebar)
+# - 2026-01-31: Removed recentGames and createRoom/joinRoom from items_order (simplified sidebar to essentials)
+# - 2026-01-30: Added full-height sidebar requirement (100vh)
+# Sidebar configuration
+
+sidebar:
+  width: "clamp(14rem, 20vw, 22rem)"
+  height: "100vh"
+  overlay_on_mobile: true
+  persistent_on_desktop: true
+  items_order:
+    - logo
+    - languageSelection
+    - themeToggle
+  collapse_breakpoint: 768
+  animation: slide
+  # Behavior flags (explicit to ensure implementation matches design):
+  autoOpenOnResize: false   # do NOT auto-open when viewport enlarges
+  alwaysShowHamburger: true # always render hamburger icon, even on large screens
+
+theme:
+  paletteRef: "docs/theme/theme_palette.yaml"
+  tokens:
+    primary: color-primary
+    surface: color-surface
+    text: color-text-primary
+    border: color-border
+    onPrimary: on_primary.light

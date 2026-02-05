@@ -1,0 +1,67 @@
+## NOTE: AI must read docs/ai/README.md before modifying this file.
+## Theme palette tokens (canonical)
+# Bright, multicolor palette for BoardGame Hub
+
+palette:
+  color-primary: "#FF3B81"
+  color-primary-light: "#FF6FA3"
+  color-secondary: "#FFD200"
+  color-accent: "#00D1FF"
+  color-accent-2: "#8B5CF6"
+  color-surface: "#FFFFFF"
+  color-surface-variant: "#FFF6F9"
+  color-bg: "#FFF7FB"
+  color-text-primary: "#0B1020"
+  color-text-secondary: "#4B5563"
+  color-border: "rgba(11,16,32,0.06)"
+  color-shadow: "rgba(11,16,32,0.12)"
+
+  # Thumbnail rotation palette (used by GameList thumbnails)
+  thumbnailPalette:
+    - "#FFB6C1"
+    - "#FFD700"
+    - "#FF7F50"
+    - "#00FA9A"
+    - "#00CED1"
+    - "#8A2BE2"
+    - "#FF69B4"
+    - "#7CFC00"
+    - "#FFA500"
+    - "#40E0D0"
+
+meta:
+  created: 2026-01-30
+  author: ai-agent
+  note: "Canonical theme token file. Any change must follow Design Update Rules in docs/ai/README.md"
+
+# Accessibility helpers
+on_primary:
+  light: "#0B1020"   # recommended text color on light primary background (accessible)
+  dark: "#FFFFFF"    # recommended text color on dark primary background
+
+color-primary-dark: "#D92E6A" # optional darker variant to support white-on-primary contrast
+
+# Suggested on_* tokens for other accent colors
+on_secondary: "#08121a"
+on_accent: "#08121a"
+on_accent2: "#FFFFFF"
+
+# Dark mode variants
+dark:
+  color-primary: "#FF6FA3"
+  color-primary-light: "#FF95C0"
+  color-secondary: "#FFB800"
+  color-accent: "#00A5C7"
+  color-accent-2: "#6F4BFF"
+  color-surface: "#121212"
+  color-surface-variant: "#1e1e1e"
+  color-bg: "#0B0B10"
+  color-text-primary: "#FFFFFF"
+  color-text-secondary: "#B0B0B0"
+  color-border: "rgba(255,255,255,0.06)"
+  color-shadow: "rgba(0,0,0,0.6)"
+
+meta_dark:
+  created: 2026-01-30
+  author: ai-agent
+  note: "Dark-mode adjustments for canonical palette. Changes must follow Design Update Rules."

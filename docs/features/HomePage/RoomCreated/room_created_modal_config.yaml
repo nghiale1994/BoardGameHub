@@ -1,0 +1,56 @@
+# NOTE: AI must read docs/ai/README.md before modifying this file.
+# Version: 2026-01-30
+# Changelog: 2026-01-30 Added RoomCreated modal layout and actions.
+
+roomCreatedModal:
+  layout:
+    maxWidth: "min(90vw, 42rem)"
+    maxHeight: "min(80vh, 32rem)"
+    padding: "clamp(1rem, 3vw, 2rem)"
+    gap: "2%"
+    borderRadius: "0.75rem"
+    overlayOpacity: 0.5
+
+  header:
+    showCloseButton: true
+    titleAlign: "left"
+
+  body:
+    shareUrl:
+      label:
+        vi: "Link mời"
+        en: "Share URL"
+      readOnly: true
+      copyButton:
+        label:
+          vi: "Sao chép"
+          en: "Copy"
+        showIcon: true
+        icon: "📋"
+    helperText:
+      vi: "Gửi link này để mời bạn bè"
+      en: "Share this link to invite friends"
+
+  footer:
+    primaryAction:
+      label:
+        vi: "Vào phòng"
+        en: "Enter room"
+    secondaryAction:
+      label:
+        vi: "Để sau"
+        en: "Later"
+
+  persistence:
+    saveToRecentRooms: true
+    storeKey: "boardgamehub.recentRooms"
+
+theme:
+  paletteRef: "docs/theme/theme_palette.yaml"
+  tokens:
+    primary: color-primary
+    surface: color-surface
+    text: color-text-primary
+    border: color-border
+    onPrimary: on_primary.light
+    accent: color-accent

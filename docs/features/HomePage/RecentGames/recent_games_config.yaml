@@ -1,0 +1,24 @@
+# NOTE: AI must read docs/ai/README.md before modifying this file.
+# Recent games configuration
+
+recent_games:
+  maxEntries: 20
+  # Logical key for the recent-games list.
+  # Canonical persistence is IndexedDB (metadata store). If a LocalStorage fallback is used,
+  # it should reuse the same key string for compatibility.
+  storeKey: "boardgamehub.recentGames"
+  displayFormat: "compact"
+  showTimestamp: true
+  # Sizing
+  layout:
+    itemHeight: "clamp(3rem, 8vh, 5rem)"  # responsive item height
+    itemPadding: "clamp(0.5rem, 1.5%, 1rem)"  # responsive padding
+    gap: "1%"  # responsive gap between items
+
+theme:
+  paletteRef: "docs/theme/theme_palette.yaml"
+  tokens:
+    surface: color-surface
+    text: color-text-primary
+    onPrimary: on_primary.light
+    onSecondary: on_secondary

@@ -1,0 +1,13 @@
+{
+  "name": "boardgamehub-scripts",
+  "version": "1.0.0",
+  "description": "Scripts for BoardGameHub development",
+  "main": "index.js",
+  "scripts": {
+    "convert-cards": "node csv-to-yaml.js",
+    "convert-cards-compact": "node csv-compact-to-yaml.js"
+  },
+  "dependencies": {
+    "csv-parse": "^5.5.5"
+  }
+}

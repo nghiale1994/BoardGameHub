@@ -1,0 +1,73 @@
+# NOTE: AI must read docs/ai/README.md before modifying this file.
+# Tech Stack Configuration for BoardGame Hub
+
+project:
+  name: BoardGame Hub
+  type: frontend-only
+  version: 0.1.0
+
+runtime:
+  node: "18.x"
+  npm: "9.x"
+
+build:
+  tool: vite
+  bundler: esbuild
+  minify: true
+  sourceMap: development
+
+runtime_framework:
+  primary: react
+  version: "18.x"
+  language: typescript
+  strict_mode: true
+  jsx_runtime: automatic
+  ui_components: @mui/material  # Material-UI library
+
+styling:
+  system: tailwindcss
+  ui_framework: mui  # Material-UI (Material Design 3 components)
+  dark_mode: true
+  design_tokens: true
+  design_system: material-design-3
+
+state_management:
+  local_state: react hooks (useState, useContext)
+  peer_state: custom context + IndexedDB persistence
+  cross_tab_sync: BroadcastChannel API
+
+networking:
+  library: peerjs
+  protocol: webrtc
+  signaling: peerjs cloud (default)
+  stun_servers:
+    - urls: "stun:stun.l.google.com:19302"
+    - urls: "stun:stun1.l.google.com:19302"
+
+persistence:
+  primary: indexeddb
+  library: idb
+  fallback: localstorage
+  db_name: boardgamehub
+
+i18n:
+  library: i18next
+  languages: [vi, en]
+  default: vi
+  detection: browser locale
+  fallback: vi
+
+testing:
+  framework: vitest
+  runner: vitest
+  coverage: c8
+
+lint:
+  tool: eslint
+  config: airbnb-typescript
+  format: prettier
+
+dev_server:
+  host: "localhost"
+  port: 5173
+  hmr: true

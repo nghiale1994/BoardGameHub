@@ -1,0 +1,40 @@
+# NOTE: AI must read docs/ai/README.md before modifying this file.
+# JoinRoom Component Configuration
+
+joinRoom:
+  urlPattern: "^[a-zA-Z0-9]{6,}$"
+  placeholder_text_vi: "Dán đường dẫn phòng tại đây"
+  placeholder_text_en: "Paste room share link here"
+  button_text_vi: "Tham gia phòng"
+  button_text_en: "Join Room"
+  error_message_invalid_vi: "Đường dẫn không hợp lệ"
+  error_message_invalid_en: "Invalid room link"
+  validation_timeout_ms: 3000
+  max_url_length: 512
+
+layout:
+  container_maxWidth: "min(90vw, 50rem)"  # responsive container
+  spacing_unit: "clamp(0.5rem, 1.5%, 1rem)"  # responsive spacing
+  input_height: "clamp(2.5rem, 6vh, 3.5rem)"  # responsive input height
+  button_height: "clamp(2.5rem, 6vh, 3.5rem)"  # responsive button height
+
+theme:
+  paletteRef: "docs/theme/theme_palette.yaml"
+  tokens:
+    primary: color-primary
+    surface: color-surface
+    text: color-text-primary
+    border: color-border
+    onPrimary: on_primary.light
+    error: color-error
+    textSecondary: color-text-secondary
+
+responsive:
+  breakpoint_mobile: 480
+  breakpoint_tablet: 768
+  breakpoint_desktop: 1024
+
+version: "1.0"
+date: "2026-01-30"
+author: "ai-agent"
+note: "JoinRoom DSL config. Validates URL format and connects to host peer. Tokens reference docs/theme/theme_palette.yaml"

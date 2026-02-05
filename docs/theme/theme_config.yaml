@@ -1,0 +1,27 @@
+# NOTE: AI must read docs/ai/README.md before modifying this file.
+# Theme config referencing canonical tokens (moved into docs/theme)
+
+presets:
+  bright:
+    name: "Bright (default)"
+    tokens:
+      primary: color-primary
+      primaryVariant: color-primary-dark
+      onPrimary: on_primary.light
+      secondary: color-secondary
+      accent: color-accent
+      surface: color-surface
+      background: color-bg
+  neon:
+    name: "Neon Accent"
+    tokens:
+      primary: color-accent
+      primaryVariant: color-accent-2
+      onPrimary: on_primary.dark
+      secondary: color-secondary
+      accent: color-primary
+      surface: color-surface
+      background: color-bg
+
+# Note: token names reference keys in docs/theme/theme_palette.yaml
+# Mapping rule: YAML token key -> CSS variable `--{token}`. Example: `color-primary` -> `--color-primary`.

@@ -1,0 +1,28 @@
+{
+  "name": "run-checklist",
+  "description": "Validates checklists by running through each item and reporting compliance status",
+  "parameters": {
+    "checklistPath": {
+      "type": "string",
+      "description": "Path to the checklist file to validate"
+    },
+    "outputFormat": {
+      "type": "string",
+      "description": "Output format: 'json' or 'markdown'",
+      "default": "markdown"
+    }
+  },
+  "output": {
+    "type": "object",
+    "properties": {
+      "passed": {
+        "type": "boolean",
+        "description": "Whether all checklist items passed"
+      },
+      "results": {
+        "type": "array",
+        "description": "Detailed results for each checklist item"
+      }
+    }
+  }
+}

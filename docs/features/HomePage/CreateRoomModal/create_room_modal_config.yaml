@@ -1,0 +1,94 @@
+# NOTE: AI must read docs/ai/README.md before modifying this file.
+# Version: 2026-01-31
+# Changelog: 2026-01-30 Added CreateRoomModal layout and settings control rules.
+# Changelog: 2026-01-30 Added settings sections and dropdown guidance.
+# Changelog: 2026-01-30 Added responsive layout (wide vs narrow) and essential settings with players-only metadata.
+# Changelog: 2026-01-31 Removed extra game metadata field from modal.
+
+createRoomModal:
+  layout:
+    maxWidth: "min(90vw, 52rem)"
+    maxHeight: "min(90vh, 40rem)"
+    padding: "clamp(1rem, 3vw, 2rem)"
+    gap: "2%"
+    borderRadius: "0.75rem"
+    overlayOpacity: 0.5
+    responsive:
+      wide:
+        breakpoint: "min-width: 769px"
+        bodyColumns: "minmax(12rem, 40%) 1fr"
+      narrow:
+        breakpoint: "max-width: 768px"
+        bodyColumns: "1fr"
+        stackOrder:
+          - media
+          - summary
+          - settingsEssential
+          - settingsAdvanced
+      transition:
+        duration: "200ms"
+        timing: "ease"
+
+  header:
+    showCloseButton: true
+    titleAlign: "left"
+
+  body:
+    media:
+      showImage: true
+      aspectRatio: "16/9"
+      width: "clamp(10rem, 35vw, 18rem)"
+    summary:
+      showMeta: true
+      metaFields:
+        - players
+        - playtime
+      descriptionMaxLines: 3
+
+  settings:
+    enabled: true
+    collapsible: true
+    defaultExpanded: false
+    button:
+      label: "⚙️ Settings"
+      position: "below-description"
+      showIcon: true
+      expandIcon: "▼"
+      collapseIcon: "▲"
+    allowDropdown: true
+    controlTypes:
+      - toggle
+      - radio
+      - checkbox
+      - dropdown
+    essential:
+      title: "Essentials"
+      alwaysVisible: true
+      controls:
+        - id: players
+          label: "Players"
+          type: dropdown
+          note: "Selectable range is game-specific"
+    sections:
+      - id: basics
+        title: "Basics"
+        allowDropdown: true
+      - id: advanced
+        title: "Advanced"
+        allowDropdown: true
+    sectionGap: "1%"
+
+  footer:
+    showBackButton: true
+    showCreateButton: true
+    buttonHeight: "clamp(2.5rem, 6vh, 3.5rem)"
+
+theme:
+  paletteRef: "docs/theme/theme_palette.yaml"
+  tokens:
+    primary: color-primary
+    surface: color-surface
+    text: color-text-primary
+    border: color-border
+    onPrimary: on_primary.light
+    accent: color-accent

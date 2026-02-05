@@ -1,0 +1,53 @@
+<!-- NOTE: AI must read docs/ai/README.md before modifying this file. -->
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Theme Palette Preview</title>
+  <style>
+    body{font-family:Arial,Helvetica,sans-serif;padding:2rem;background:#fafafa;color:#0b1020}
+    .swatch{display:flex;gap:1rem;flex-wrap:wrap}
+    .tile{width:160px;height:120px;border-radius:8px;box-shadow:0 2px 6px rgba(0,0,0,0.08);display:flex;flex-direction:column;justify-content:flex-end;padding:0.75rem}
+    .label{font-size:0.9rem;font-weight:700}
+    .sub{font-size:0.75rem;color:#4b5563}
+    .row{margin-bottom:1rem}
+  </style>
+</head>
+<body>
+  <h1>Theme Palette Preview (canonical)</h1>
+  <p>Light tokens</p>
+  <div class="swatch">
+    <div class="tile" style="background:#FF3B81;color:#0B1020"><div class="label">color-primary</div><div class="sub">#FF3B81</div></div>
+    <div class="tile" style="background:#FF6FA3;color:#0B1020"><div class="label">color-primary-light</div><div class="sub">#FF6FA3</div></div>
+    <div class="tile" style="background:#FFD200;color:#0B1020"><div class="label">color-secondary</div><div class="sub">#FFD200</div></div>
+    <div class="tile" style="background:#00D1FF;color:#08121a"><div class="label">color-accent</div><div class="sub">#00D1FF</div></div>
+    <div class="tile" style="background:#8B5CF6;color:#ffffff"><div class="label">color-accent-2</div><div class="sub">#8B5CF6</div></div>
+  </div>
+
+  <h2>Thumbnail palette</h2>
+  <div class="swatch">
+    <div class="tile" style="background:#FFB6C1;color:#08121a"><div class="label">thumb 1</div><div class="sub">#FFB6C1</div></div>
+    <div class="tile" style="background:#FFD700;color:#08121a"><div class="label">thumb 2</div><div class="sub">#FFD700</div></div>
+    <div class="tile" style="background:#FF7F50;color:#08121a"><div class="label">thumb 3</div><div class="sub">#FF7F50</div></div>
+    <div class="tile" style="background:#00FA9A;color:#08121a"><div class="label">thumb 4</div><div class="sub">#00FA9A</div></div>
+  </div>
+
+  <h2>Dark mode tokens</h2>
+  <div class="swatch">
+    <div class="tile" style="background:#FF6FA3;color:#ffffff"><div class="label">color-primary (dark variant)</div><div class="sub">#FF6FA3</div></div>
+    <div class="tile" style="background:#0B0B10;color:#ffffff"><div class="label">color-bg</div><div class="sub">#0B0B10</div></div>
+    <div class="tile" style="background:#121212;color:#ffffff"><div class="label">color-surface</div><div class="sub">#121212</div></div>
+    <div class="tile" style="background:#00A5C7;color:#ffffff"><div class="label">color-accent</div><div class="sub">#00A5C7</div></div>
+  </div>
+  
+  <h2>Accessibility helpers</h2>
+  <div class="swatch">
+    <div class="tile" style="background:#0B1020;color:#ffffff"><div class="label">on_primary.light</div><div class="sub">#0B1020</div></div>
+    <div class="tile" style="background:#FFFFFF;color:#08121a;border:1px solid #e5e7eb"><div class="label">on_primary.dark</div><div class="sub">#FFFFFF</div></div>
+    <div class="tile" style="background:#D92E6A;color:#ffffff"><div class="label">color-primary-dark</div><div class="sub">#D92E6A</div></div>
+  </div>
+
+  <p>Preview file moved to `docs/theme/theme_palette_preview.html` to match canonical theme folder.</p>
+</body>
+</html>

@@ -1,0 +1,27 @@
+# NOTE: AI must read docs/ai/README.md before modifying this file.
+# Display name persistence and validation
+
+displayName:
+  storageKey: "boardgamehub.displayName"
+  maxLength: 32
+  placeholder:
+    vi: "Tên người chơi"
+    en: "Player name"
+  validation:
+    required: true
+    regex: "^[\u0020-\u007E\u00C0-\u024F]+$"
+  persist:
+    primary: indexeddb
+    fallback: localstorage
+  # Sizing
+  layout:
+    inputHeight: "clamp(2.25rem, 5vh, 3rem)"  # responsive input height
+    inputMaxWidth: "min(90%, 30rem)"  # responsive max width
+    padding: "clamp(0.5rem, 1.5%, 1rem)"  # responsive padding
+
+theme:
+  paletteRef: "docs/theme/theme_palette.yaml"
+  tokens:
+    text: color-text-primary
+    surface: color-surface
+    onPrimary: on_primary.light

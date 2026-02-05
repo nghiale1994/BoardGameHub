@@ -1,0 +1,34 @@
+# NOTE: AI must read docs/ai/README.md before modifying this file.
+# ThemeToggle Component Configuration
+
+themeToggle:
+  storage_key: "app.theme"
+  default_theme: light
+  supported_themes:
+    - light
+    - dark
+  animation_duration_ms: 300
+
+layout:
+  button_size: "clamp(2rem, 4vw, 2.5rem)"  # responsive button size
+  icon_size: "clamp(1rem, 2.5vw, 1.5rem)"  # responsive icon size
+  spacing: "clamp(0.25rem, 1%, 0.5rem)"  # responsive spacing
+
+theme:
+  paletteRef: "docs/theme/theme_palette.yaml"
+  tokens:
+    primary: color-primary
+    surface: color-surface
+    text: color-text-primary
+    onPrimary: on_primary.light
+    secondary: color-secondary
+    background: color-bg
+
+responsive:
+  breakpoint_mobile: 480
+  breakpoint_tablet: 768
+
+version: "1.0"
+date: "2026-01-30"
+author: "ai-agent"
+note: "ThemeToggle DSL. Switch between light and dark themes; persist preference to LocalStorage. Tokens reference docs/theme/theme_palette.yaml"

@@ -1,0 +1,30 @@
+# NOTE: AI must read docs/ai/README.md before modifying this file.
+# Version: 2026-01-31
+# Changelog:
+# - 2026-01-31: Added canonical homepage layout DSL (previously referenced but missing).
+
+homepage_layout:
+  layout:
+    # Full-width main content per design.md notes.
+    mainMaxWidth: "100vw"
+    mainPadding: "clamp(1rem, 3vw, 2rem)"
+
+    sidebar:
+      width: "clamp(14rem, 20vw, 22rem)"
+      height: "100vh"
+
+    sections:
+      gap: "clamp(0.75rem, 2vw, 1.5rem)"
+      order:
+        - welcome
+        - joinRoom
+        - gameList
+        - recentGames
+
+  responsive:
+    breakpoints:
+      mobileMax: 768
+      tabletMax: 1024
+    sidebar:
+      overlayOnMobile: true
+      persistentOnDesktop: true

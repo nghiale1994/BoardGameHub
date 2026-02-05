@@ -1,0 +1,100 @@
+# NOTE: AI must read docs/ai/README.md before modifying this file.
+# Version: 2026-01-31
+# Changelog:
+# - 2026-01-31: Restored modalConfigRef to CreateRoomModal (modal exists, standalone CreateRoom component does not).
+# - 2026-01-31: Removed orphaned modalConfigRef (CreateRoom component deleted). Game card click behavior defined in GameListGrid.md.
+# - 2026-01-30: Added CreateRoomModal trigger on game card selection.
+# GameListGrid Configuration
+
+game_list_grid:
+  # Layout
+  grid:
+    columns: 5
+    rows: 2
+    pageSize: 10
+    gap: "2%"  # responsive percentage of container
+
+  behavior:
+    openModalOnSelect: true
+    modalConfigRef: "docs/features/HomePage/CreateRoomModal/create_room_modal_config.yaml"  # CreateRoomModal (modal triggered by game card click)
+
+  # Card styling (Material Design 3)
+  card:
+    width: "clamp(10rem, 15%, 20rem)"  # responsive card width
+    height: "clamp(12rem, 18vw, 24rem)"  # responsive card height
+    cornerRadius: "12px"  # border radius (fixed, independent of sizing rule)
+    padding: "clamp(0.75rem, 2%, 1.5rem)"  # responsive padding
+    elevation:
+      default: 1
+      hover: 2
+      pressed: 3
+
+  theme:
+    paletteRef: "docs/theme/theme_palette.yaml"
+    tokens:
+      primary: color-primary
+      surface: color-surface
+      text: color-text-primary
+      thumbnailPalette: thumbnailPalette
+      onPrimary: on_primary.light
+      onSecondary: on_secondary
+      onAccent: on_accent
+      onAccent2: on_accent2
+
+  # Image
+  image:
+    width: "clamp(5rem, 12vw, 8rem)"  # responsive image width
+    height: "clamp(5rem, 12vw, 8rem)"  # responsive image height
+    placeholder: "/assets/game-placeholder.svg"
+
+  # Typography
+  typography:
+    gameName:
+      fontSize: "clamp(0.875rem, 1.5vw, 1rem)"  # responsive font size
+      fontWeight: bold
+      lineHeight: 1.5
+    playerCount:
+      fontSize: "clamp(0.75rem, 1.2vw, 0.875rem)"  # responsive font size
+      fontWeight: normal
+      lineHeight: 1.4
+
+  # Pagination
+  pagination:
+    style: "button"  # button | dots
+    prevLabel: "◀ Prev"
+    nextLabel: "Next ▶"
+    showPageIndicator: true
+
+  # Responsive breakpoints
+  responsive:
+    mobileCompact:
+      maxWidth: 360
+      grid:
+        columns: 1
+        rows: 10
+        pageSize: 10
+    mobile:
+      maxWidth: 767
+      grid:
+        columns: 2
+        rows: 5
+        pageSize: 10
+    tablet:
+      maxWidth: 1024
+      grid:
+        columns: 3
+        rows: 4
+        pageSize: 10
+    desktop:
+      minWidth: 1025
+      grid:
+        columns: 5
+        rows: 2
+        pageSize: 10
+
+  # Empty state
+  emptyState:
+    icon: "🎲"
+    message:
+      vi: "Chưa có game nào"
+      en: "No games available"

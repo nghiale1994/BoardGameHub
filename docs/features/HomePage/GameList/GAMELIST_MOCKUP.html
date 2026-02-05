@@ -1,0 +1,796 @@
+<!DOCTYPE html>
+<!-- NOTE: AI must read docs/ai/README.md before modifying this file. -->
+<!-- Version: 2026-02-02 | Changelog: Moved pagination directly under search/filter row (to match current GameListGrid behavior). -->
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BoardGame Hub - GameListGrid Mockup</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --color-primary: #ff3b81;
+      --color-primary-light: #ff6fa3;
+      --color-secondary: #ffd200;
+      --color-accent: #00d1ff;
+      --color-accent-2: #8b5cf6;
+      --color-surface: #ffffff;
+      --color-surface-dark: #fff6f9;
+      --color-bg: linear-gradient(180deg, #fff7fb 0%, #fffef6 100%);
+      --color-text-primary: #0b1020;
+      --color-text-secondary: #4b5563;
+      --color-border: rgba(11,16,32,0.08);
+      --color-shadow: rgba(11,16,32,0.12);
+      --radius: 0.75rem;
+      --spacing-xs: 0.5rem;
+      --spacing-sm: 1rem;
+      --spacing-md: 1.5rem;
+      --spacing-lg: 2rem;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: var(--color-bg);
+      color: var(--color-text-primary);
+      padding: var(--spacing-lg);
+      min-height: 100vh;
+    }
+
+    .topbar {
+      max-width: 1200px;
+      margin: 0 auto var(--spacing-md);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--spacing-md);
+    }
+
+    .title {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+
+    .title h1 { font-size: 1.25rem; }
+    .title p { color: var(--color-text-secondary); font-size: 0.9rem; }
+
+    .back-link {
+      text-decoration: none;
+      color: var(--color-text-primary);
+      border: 1px solid var(--color-border);
+      background: rgba(255,255,255,0.6);
+      padding: 0.6rem 0.9rem;
+      border-radius: 999px;
+    }
+
+    .card {
+      max-width: 1200px;
+      margin: 0 auto;
+      background: rgba(255,255,255,0.85);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius);
+      padding: var(--spacing-lg);
+      box-shadow: 0 10px 30px rgba(11,16,32,0.08);
+      backdrop-filter: blur(6px);
+    }
+
+    .controls {
+      display: flex;
+      gap: var(--spacing-sm);
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .search-group {
+      flex: 1;
+      min-width: 240px;
+      display: flex;
+      gap: var(--spacing-xs);
+      align-items: center;
+    }
+
+    .search-input {
+      flex: 1;
+      padding: 0.75rem 1rem;
+      border-radius: 999px;
+      border: 1px solid var(--color-border);
+      background: var(--color-surface);
+      outline: none;
+    }
+
+    .icon-btn {
+      width: 42px;
+      height: 42px;
+      border-radius: 999px;
+      border: 1px solid var(--color-border);
+      background: var(--color-surface);
+      cursor: pointer;
+    }
+
+    .filter-btn {
+      position: relative;
+      padding: 0.75rem 1rem;
+      border-radius: 999px;
+      border: 1px solid var(--color-border);
+      background: var(--color-surface);
+      cursor: pointer;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .badge {
+      display: none;
+      min-width: 22px;
+      height: 22px;
+      padding: 0 6px;
+      border-radius: 999px;
+      background: var(--color-primary);
+      color: white;
+      font-size: 0.8rem;
+      font-weight: 700;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .chips-row {
+      margin-top: var(--spacing-sm);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--spacing-sm);
+      flex-wrap: wrap;
+      min-height: 32px;
+    }
+
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--spacing-xs);
+      align-items: center;
+    }
+
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: rgba(255,59,129,0.12);
+      border: 1px solid rgba(255,59,129,0.25);
+      color: var(--color-text-primary);
+      padding: 0.35rem 0.6rem;
+      border-radius: 999px;
+      font-size: 0.85rem;
+    }
+
+    .chip button {
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      font-weight: 800;
+      color: rgba(11,16,32,0.7);
+    }
+
+    .clear-all {
+      display: none;
+      border: none;
+      background: transparent;
+      color: var(--color-text-secondary);
+      cursor: pointer;
+      text-decoration: underline;
+    }
+
+    .grid {
+      margin-top: var(--spacing-md);
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 2%;
+    }
+
+    .game-card {
+      aspect-ratio: 3/4;
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius);
+      padding: var(--spacing-sm);
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-sm);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .game-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(11,16,32,0.10);
+    }
+
+    .thumb {
+      width: 100%;
+      aspect-ratio: 16/9;
+      border-radius: 10px;
+      background: linear-gradient(135deg, #ff3b81 0%, #e01e5a 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: 800;
+    }
+
+    .name { font-weight: 800; }
+
+    .meta {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+      color: var(--color-text-secondary);
+      font-size: 0.9rem;
+    }
+
+    .pill {
+      align-self: flex-start;
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: rgba(11,16,32,0.9);
+      background: rgba(255,210,0,0.45);
+      border: 1px solid rgba(255,210,0,0.65);
+      padding: 0.15rem 0.5rem;
+      border-radius: 999px;
+    }
+
+    .pagination {
+      margin-top: var(--spacing-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--spacing-sm);
+      flex-wrap: wrap;
+    }
+
+    .page-btn {
+      padding: 0.6rem 1rem;
+      border-radius: 999px;
+      border: 1px solid var(--color-border);
+      background: rgba(255,255,255,0.7);
+      cursor: pointer;
+      font-weight: 700;
+    }
+
+    .page-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    .page-indicator { color: var(--color-text-secondary); font-weight: 700; }
+
+    /* Filter overlay + panel (Option B) */
+    .overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(11,16,32,0.42);
+      display: none;
+      z-index: 999;
+    }
+
+    .panel {
+      position: fixed;
+      top: 0;
+      right: 0;
+      height: 100vh;
+      width: min(420px, 92vw);
+      background: white;
+      border-left: 1px solid var(--color-border);
+      padding: var(--spacing-md);
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-sm);
+      transform: translateX(100%);
+      transition: transform 0.25s ease;
+      z-index: 1000;
+    }
+
+    .overlay.open { display: block; }
+    .panel.open { transform: translateX(0); }
+
+    .panel-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--spacing-sm);
+    }
+
+    .panel-title { font-weight: 900; font-size: 1.1rem; }
+
+    .panel-close {
+      border: 1px solid var(--color-border);
+      background: rgba(255,255,255,0.8);
+      border-radius: 999px;
+      width: 42px;
+      height: 42px;
+      cursor: pointer;
+      font-size: 1.1rem;
+    }
+
+    .panel-body { overflow: auto; padding-right: 4px; }
+
+    .filter-group { padding: var(--spacing-sm) 0; border-top: 1px dashed rgba(11,16,32,0.12); }
+    .filter-group:first-child { border-top: none; }
+
+    .filter-group h3 { font-size: 0.95rem; margin-bottom: 0.5rem; }
+
+    .option-row { display: flex; align-items: center; gap: 0.6rem; padding: 0.3rem 0; color: var(--color-text-secondary); }
+    .option-row input { width: 18px; height: 18px; }
+
+    .panel-footer {
+      display: flex;
+      gap: var(--spacing-sm);
+      align-items: center;
+      justify-content: flex-end;
+      padding-top: var(--spacing-sm);
+      border-top: 1px solid rgba(11,16,32,0.08);
+    }
+
+    .btn {
+      padding: 0.75rem 1rem;
+      border-radius: 999px;
+      border: 1px solid var(--color-border);
+      background: rgba(255,255,255,0.8);
+      cursor: pointer;
+      font-weight: 800;
+    }
+
+    .btn-primary {
+      background: var(--color-primary);
+      border-color: rgba(255,59,129,0.45);
+      color: white;
+    }
+
+    /* Responsive grid columns: 5 / 3 / 2 / 1 (<=360) */
+    @media (max-width: 1024px) {
+      .grid { grid-template-columns: repeat(3, 1fr); gap: 3%; }
+    }
+
+    @media (max-width: 768px) {
+      .grid { grid-template-columns: repeat(2, 1fr); gap: 4%; }
+    }
+
+    @media (max-width: 360px) {
+      .grid { grid-template-columns: 1fr; }
+    }
+
+    /* Mobile: panel behaves like bottom sheet; Apply button visible */
+    @media (max-width: 768px) {
+      .panel {
+        top: auto;
+        bottom: 0;
+        width: 100vw;
+        height: 78vh;
+        border-left: none;
+        border-top: 1px solid var(--color-border);
+        border-radius: 18px 18px 0 0;
+        transform: translateY(100%);
+      }
+
+      .panel.open { transform: translateY(0); }
+
+      .panel-footer { justify-content: space-between; }
+      .panel-footer .btn-primary { display: inline-flex; }
+    }
+
+    @media (min-width: 769px) {
+      .panel-footer .btn-primary { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="topbar">
+    <div class="title">
+      <h1>GameListGrid Mockup</h1>
+      <p>Tìm kiếm + lọc + phân trang (Option B)</p>
+    </div>
+    <a class="back-link" href="../MOCKUP_INDEX.html" target="_blank">← Quay về Index</a>
+  </div>
+
+  <div class="card">
+    <div class="controls">
+      <div class="search-group">
+        <input id="gameSearch" class="search-input" type="text" placeholder="Tìm game..." />
+        <button id="clearSearch" class="icon-btn" title="Clear">✕</button>
+      </div>
+
+      <button id="filterBtn" class="filter-btn">
+        Bộ lọc
+        <span id="filterCount" class="badge">0</span>
+      </button>
+    </div>
+
+    <div class="pagination">
+      <button id="prevBtn" class="page-btn">← Previous</button>
+      <span class="page-indicator">Trang <span id="currentPage">1</span> / <span id="totalPages">1</span></span>
+      <button id="nextBtn" class="page-btn">Next →</button>
+    </div>
+
+    <div class="chips-row">
+      <div id="filterChips" class="chips"></div>
+      <button id="clearAllChips" class="clear-all">Xóa tất cả</button>
+    </div>
+
+    <div id="gameGrid" class="grid"></div>
+  </div>
+
+  <div id="filterOverlay" class="overlay"></div>
+  <aside id="filterPanel" class="panel" aria-label="Filter panel">
+    <div class="panel-header">
+      <div class="panel-title">Bộ lọc</div>
+      <button class="panel-close" id="closeFilter" aria-label="Close">✕</button>
+    </div>
+
+    <div class="panel-body">
+      <div class="filter-group">
+        <h3>Tier 1 — Số người chơi</h3>
+        <label class="option-row"><input type="checkbox" name="players" value="2-4" /> 2–4</label>
+        <label class="option-row"><input type="checkbox" name="players" value="4-6" /> 4–6</label>
+        <label class="option-row"><input type="checkbox" name="players" value="6+" /> 6+</label>
+      </div>
+
+      <div class="filter-group">
+        <h3>Tier 1 — Thời lượng</h3>
+        <label class="option-row"><input type="radio" name="playtime" value="0-30" /> 0–30 phút</label>
+        <label class="option-row"><input type="radio" name="playtime" value="30-60" /> 30–60 phút</label>
+        <label class="option-row"><input type="radio" name="playtime" value="60+" /> 60+ phút</label>
+        <label class="option-row"><input type="radio" name="playtime" value="" checked /> Bất kỳ</label>
+      </div>
+
+      <div class="filter-group">
+        <h3>Tier 2 — Độ phức tạp</h3>
+        <label class="option-row"><input type="radio" name="complexity" value="easy" /> Dễ</label>
+        <label class="option-row"><input type="radio" name="complexity" value="medium" /> Vừa</label>
+        <label class="option-row"><input type="radio" name="complexity" value="hard" /> Khó</label>
+        <label class="option-row"><input type="radio" name="complexity" value="" checked /> Bất kỳ</label>
+      </div>
+
+      <div class="filter-group">
+        <h3>Tier 2 — Thể loại</h3>
+        <label class="option-row"><input type="checkbox" name="category" value="strategic" /> Strategic</label>
+        <label class="option-row"><input type="checkbox" name="category" value="party" /> Party</label>
+        <label class="option-row"><input type="checkbox" name="category" value="educational" /> Educational</label>
+      </div>
+    </div>
+
+    <div class="panel-footer">
+      <button id="resetFilters" class="btn">Clear all</button>
+      <button id="applyFilters" class="btn btn-primary">Apply</button>
+    </div>
+  </aside>
+
+  <!-- CreateRoomModal (Preview) -->
+  <div id="createRoomOverlay" class="overlay" style="display:none;"></div>
+  <div id="createRoomModal" style="display:none; position:fixed; inset:0; z-index:1200; place-items:center;">
+    <div style="width:min(720px,92vw); background:white; border-radius:16px; border:1px solid rgba(11,16,32,0.12); box-shadow:0 30px 80px rgba(11,16,32,0.25); overflow:hidden;">
+      <div style="padding:16px 18px; display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid rgba(11,16,32,0.08);">
+        <div style="font-weight:900;" id="modalGameTitle">Game</div>
+        <button id="closeCreateRoom" style="border:1px solid rgba(11,16,32,0.12); background:rgba(255,255,255,0.85); border-radius:999px; width:42px; height:42px; cursor:pointer;">✕</button>
+      </div>
+      <div style="padding:18px; display:grid; grid-template-columns: 1.1fr 0.9fr; gap:16px;">
+        <div>
+          <div class="thumb" style="height:140px; aspect-ratio:auto;">Game Image</div>
+          <p style="margin-top:10px; color:var(--color-text-secondary);">Click card → opens CreateRoomModal with game pre-selected.</p>
+        </div>
+        <div>
+          <div style="font-weight:900; margin-bottom:8px;">Thiết yếu</div>
+          <div style="display:flex; justify-content:space-between; color:var(--color-text-secondary); padding:8px 0; border-bottom:1px dashed rgba(11,16,32,0.12);">
+            <span>Thời lượng</span>
+            <strong id="modalGamePlaytime">—</strong>
+          </div>
+          <div style="display:flex; justify-content:space-between; color:var(--color-text-secondary); padding:8px 0;">
+            <span>Số người chơi</span>
+            <strong id="modalGamePlayers">—</strong>
+          </div>
+          <button id="confirmCreate" class="btn btn-primary" style="width:100%; margin-top:12px;">Create Room</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const games = [
+      { id: 'bg-001', name: 'Terraforming Mars', players: { min: 1, max: 5 }, playtime: { min: 90, max: 120 }, complexity: 'hard', categories: ['strategic'] },
+      { id: 'bg-002', name: 'Codenames', players: { min: 2, max: 8 }, playtime: { min: 15, max: 20 }, complexity: 'easy', categories: ['party'] },
+      { id: 'bg-003', name: 'Ticket to Ride', players: { min: 2, max: 5 }, playtime: { min: 45, max: 60 }, complexity: 'medium', categories: ['educational'] },
+      { id: 'bg-004', name: 'Azul', players: { min: 2, max: 4 }, playtime: { min: 30, max: 45 }, complexity: 'easy', categories: ['strategic'] },
+      { id: 'bg-005', name: 'Splendor', players: { min: 2, max: 4 }, playtime: { min: 25, max: 35 }, complexity: 'easy', categories: ['strategic'] },
+      { id: 'bg-006', name: 'The Mind', players: { min: 2, max: 4 }, playtime: { min: 15, max: 20 }, complexity: 'easy', categories: ['party'] },
+      { id: 'bg-007', name: '7 Wonders', players: { min: 3, max: 7 }, playtime: { min: 30, max: 45 }, complexity: 'medium', categories: ['strategic'] },
+      { id: 'bg-008', name: 'Just One', players: { min: 3, max: 7 }, playtime: { min: 20, max: 25 }, complexity: 'easy', categories: ['party'] },
+      { id: 'bg-009', name: 'Carcassonne', players: { min: 2, max: 5 }, playtime: { min: 35, max: 45 }, complexity: 'easy', categories: ['strategic'] },
+      { id: 'bg-010', name: 'Pandemic', players: { min: 2, max: 4 }, playtime: { min: 45, max: 60 }, complexity: 'medium', categories: ['educational'] },
+      { id: 'bg-011', name: 'Dixit', players: { min: 3, max: 6 }, playtime: { min: 25, max: 35 }, complexity: 'easy', categories: ['party'] },
+      { id: 'bg-012', name: 'Wingspan', players: { min: 1, max: 5 }, playtime: { min: 40, max: 70 }, complexity: 'medium', categories: ['strategic'] },
+    ];
+
+    const pageSize = 10;
+    let currentPage = 1;
+    let searchTerm = '';
+    let searchTimer = null;
+
+    let appliedFilters = {
+      players: [],
+      playtime: '',
+      complexity: '',
+      category: [],
+    };
+
+    let draftFilters = structuredClone(appliedFilters);
+
+    const el = (id) => document.getElementById(id);
+
+    function isMobile() {
+      return window.matchMedia('(max-width: 768px)').matches;
+    }
+
+    function openFilterPanel() {
+      el('filterOverlay').classList.add('open');
+      el('filterPanel').classList.add('open');
+      // When opening on mobile: load draft from applied so changes stay isolated
+      if (isMobile()) {
+        draftFilters = structuredClone(appliedFilters);
+        setPanelFromFilters(draftFilters);
+      } else {
+        setPanelFromFilters(appliedFilters);
+      }
+    }
+
+    function closeFilterPanel() {
+      el('filterOverlay').classList.remove('open');
+      el('filterPanel').classList.remove('open');
+    }
+
+    function complexityLabel(value) {
+      if (value === 'easy') return 'Dễ';
+      if (value === 'medium') return 'Vừa';
+      if (value === 'hard') return 'Khó';
+      return '—';
+    }
+
+    function formatPlaytime(game) {
+      return `${game.playtime.min}–${game.playtime.max} phút`;
+    }
+
+    function formatPlayerRange(game) {
+      return `${game.players.min}–${game.players.max}`;
+    }
+
+    function filterByPlayers(game, playerRanges) {
+      if (!playerRanges.length) return true;
+      return playerRanges.some((range) => {
+        if (range === '2-4') return game.players.max >= 2 && game.players.min <= 4;
+        if (range === '4-6') return game.players.max >= 4 && game.players.min <= 6;
+        if (range === '6+') return game.players.max >= 6;
+        return true;
+      });
+    }
+
+    function filterByPlaytime(game, playtimeRange) {
+      if (!playtimeRange) return true;
+      const max = game.playtime.max;
+      if (playtimeRange === '0-30') return max <= 30;
+      if (playtimeRange === '30-60') return max > 30 && max <= 60;
+      if (playtimeRange === '60+') return max > 60;
+      return true;
+    }
+
+    function getFilteredGames() {
+      const list = games
+        .filter((g) => !searchTerm || g.name.toLowerCase().includes(searchTerm.toLowerCase()))
+        .filter((g) => filterByPlayers(g, appliedFilters.players))
+        .filter((g) => filterByPlaytime(g, appliedFilters.playtime))
+        .filter((g) => !appliedFilters.complexity || g.complexity === appliedFilters.complexity)
+        .filter((g) => !appliedFilters.category.length || appliedFilters.category.some((c) => g.categories.includes(c)));
+
+      return list;
+    }
+
+    function chipLabel(key, value) {
+      if (key === 'players') return `👥 ${value}`;
+      if (key === 'playtime') {
+        if (value === '0-30') return '⏱️ 0–30 phút';
+        if (value === '30-60') return '⏱️ 30–60 phút';
+        if (value === '60+') return '⏱️ 60+ phút';
+      }
+      if (key === 'complexity') return `🧠 ${complexityLabel(value)}`;
+      if (key === 'category') return `🏷️ ${value}`;
+      return `${key}:${value}`;
+    }
+
+    function getActiveChips(filters) {
+      const chips = [];
+      for (const p of filters.players) chips.push({ key: 'players', value: p });
+      if (filters.playtime) chips.push({ key: 'playtime', value: filters.playtime });
+      if (filters.complexity) chips.push({ key: 'complexity', value: filters.complexity });
+      for (const c of filters.category) chips.push({ key: 'category', value: c });
+      return chips;
+    }
+
+    function renderChips() {
+      const chips = getActiveChips(appliedFilters);
+      const chipsEl = el('filterChips');
+      chipsEl.innerHTML = '';
+
+      chips.forEach((chip) => {
+        const c = document.createElement('span');
+        c.className = 'chip';
+        c.innerHTML = `${chipLabel(chip.key, chip.value)} <button title="Remove">✕</button>`;
+        c.querySelector('button').addEventListener('click', () => {
+          if (chip.key === 'players') appliedFilters.players = appliedFilters.players.filter((x) => x !== chip.value);
+          if (chip.key === 'playtime') appliedFilters.playtime = '';
+          if (chip.key === 'complexity') appliedFilters.complexity = '';
+          if (chip.key === 'category') appliedFilters.category = appliedFilters.category.filter((x) => x !== chip.value);
+          setPanelFromFilters(appliedFilters);
+          currentPage = 1;
+          render();
+        });
+        chipsEl.appendChild(c);
+      });
+
+      const count = chips.length;
+      const badge = el('filterCount');
+      if (count > 0) {
+        badge.textContent = count;
+        badge.style.display = 'inline-flex';
+        el('clearAllChips').style.display = 'inline-flex';
+      } else {
+        badge.style.display = 'none';
+        el('clearAllChips').style.display = 'none';
+      }
+    }
+
+    function renderGrid() {
+      const filtered = getFilteredGames();
+      const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
+      if (currentPage > totalPages) currentPage = totalPages;
+
+      const start = (currentPage - 1) * pageSize;
+      const slice = filtered.slice(start, start + pageSize);
+
+      const grid = el('gameGrid');
+      grid.innerHTML = '';
+
+      slice.forEach((g) => {
+        const card = document.createElement('div');
+        card.className = 'game-card';
+        card.innerHTML = `
+          <div class="thumb">${g.name}</div>
+          <div class="name">${g.name}</div>
+          <div class="meta">
+            <div class="pill">👥 ${formatPlayerRange(g)}</div>
+            <div>⏱️ ${formatPlaytime(g)}</div>
+            <div>🧠 ${complexityLabel(g.complexity)}</div>
+          </div>
+        `;
+        card.addEventListener('click', () => openCreateRoom(g));
+        grid.appendChild(card);
+      });
+
+      el('currentPage').textContent = String(currentPage);
+      el('totalPages').textContent = String(totalPages);
+      el('prevBtn').disabled = currentPage <= 1;
+      el('nextBtn').disabled = currentPage >= totalPages;
+    }
+
+    function render() {
+      renderChips();
+      renderGrid();
+    }
+
+    function setPanelFromFilters(filters) {
+      document.querySelectorAll('input[name="players"]').forEach((i) => (i.checked = filters.players.includes(i.value)));
+      document.querySelectorAll('input[name="playtime"]').forEach((i) => (i.checked = i.value === filters.playtime));
+      document.querySelectorAll('input[name="complexity"]').forEach((i) => (i.checked = i.value === filters.complexity));
+      document.querySelectorAll('input[name="category"]').forEach((i) => (i.checked = filters.category.includes(i.value)));
+    }
+
+    function getFiltersFromPanel() {
+      const players = Array.from(document.querySelectorAll('input[name="players"]:checked')).map((i) => i.value);
+      const playtime = (document.querySelector('input[name="playtime"]:checked') || { value: '' }).value;
+      const complexity = (document.querySelector('input[name="complexity"]:checked') || { value: '' }).value;
+      const category = Array.from(document.querySelectorAll('input[name="category"]:checked')).map((i) => i.value);
+      return { players, playtime, complexity, category };
+    }
+
+    function syncDraftOrApply() {
+      if (isMobile()) {
+        draftFilters = getFiltersFromPanel();
+      } else {
+        appliedFilters = getFiltersFromPanel();
+        currentPage = 1;
+        render();
+      }
+    }
+
+    // CreateRoomModal preview
+    function openCreateRoom(game) {
+      el('createRoomOverlay').style.display = 'block';
+      el('createRoomModal').style.display = 'grid';
+      el('modalGameTitle').textContent = game.name;
+      el('modalGamePlaytime').textContent = `${game.playtime.min}–${game.playtime.max} phút`;
+      el('modalGamePlayers').textContent = `${game.players.min}–${game.players.max}`;
+    }
+
+    function closeCreateRoom() {
+      el('createRoomOverlay').style.display = 'none';
+      el('createRoomModal').style.display = 'none';
+    }
+
+    // Wire up controls
+    el('filterBtn').addEventListener('click', openFilterPanel);
+    el('closeFilter').addEventListener('click', closeFilterPanel);
+    el('filterOverlay').addEventListener('click', closeFilterPanel);
+
+    el('resetFilters').addEventListener('click', () => {
+      appliedFilters = { players: [], playtime: '', complexity: '', category: [] };
+      draftFilters = structuredClone(appliedFilters);
+      setPanelFromFilters(appliedFilters);
+      currentPage = 1;
+      render();
+    });
+
+    el('applyFilters').addEventListener('click', () => {
+      appliedFilters = structuredClone(draftFilters);
+      currentPage = 1;
+      render();
+      closeFilterPanel();
+    });
+
+    // Apply immediately on desktop/tablet
+    document.querySelectorAll('#filterPanel input').forEach((input) => {
+      input.addEventListener('change', syncDraftOrApply);
+    });
+
+    el('clearAllChips').addEventListener('click', () => {
+      appliedFilters = { players: [], playtime: '', complexity: '', category: [] };
+      draftFilters = structuredClone(appliedFilters);
+      setPanelFromFilters(appliedFilters);
+      currentPage = 1;
+      render();
+    });
+
+    el('prevBtn').addEventListener('click', () => {
+      if (currentPage > 1) {
+        currentPage -= 1;
+        renderGrid();
+      }
+    });
+
+    el('nextBtn').addEventListener('click', () => {
+      const totalPages = Math.max(1, Math.ceil(getFilteredGames().length / pageSize));
+      if (currentPage < totalPages) {
+        currentPage += 1;
+        renderGrid();
+      }
+    });
+
+    el('gameSearch').addEventListener('input', (e) => {
+      const value = e.target.value;
+      clearTimeout(searchTimer);
+      searchTimer = setTimeout(() => {
+        searchTerm = value.trim();
+        currentPage = 1;
+        render();
+      }, 300);
+    });
+
+    el('clearSearch').addEventListener('click', () => {
+      el('gameSearch').value = '';
+      searchTerm = '';
+      currentPage = 1;
+      render();
+    });
+
+    el('closeCreateRoom').addEventListener('click', closeCreateRoom);
+    el('confirmCreate').addEventListener('click', () => {
+      closeCreateRoom();
+      alert('Create room (mock)');
+    });
+
+    render();
+  </script>
+</body>
+</html>

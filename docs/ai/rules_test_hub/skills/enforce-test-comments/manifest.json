@@ -1,0 +1,14 @@
+{
+  "id": "enforce-test-comments",
+  "description": "Validate and standardize test header comments to the repo policy (Tests: + Steps: numbered lines) and optionally insert inline `// Step N)` markers.",
+  "trigger": "command:enforceTestComments",
+  "inputs": {
+    "paths": { "type": "string[]", "description": "Files or glob patterns to process" },
+    "dryRun": { "type": "boolean", "description": "If true, only report changes" }
+  },
+  "outputs": {
+    "modifiedFiles": { "type": "string[]" }
+  },
+  "permissions": ["repo:modify-tests"],
+  "successCriteria": "All matched files contain multi-line `Tests:` and `Steps:` headers and added inline step markers when applicable."
+}

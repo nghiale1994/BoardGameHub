@@ -1,0 +1,1319 @@
+<!DOCTYPE html>
+<!-- NOTE: AI must read docs/ai/README.md before modifying this file. -->
+<!-- Last updated: 2026-02-02 | Components Mockup: GameListGrid and JoinRoom combined; naming: CreateRoomModal | Changelog: Normalized invite URL examples to https://boardgamehub.com/i/:roomId; Split invite URL (/i/:roomId) from GameRoom URL (/room/:roomId) -->
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BoardGame Hub - Components Mockup</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --color-primary: #ff3b81;
+      --color-primary-light: #ff6fa3;
+      --color-secondary: #ffd200;
+      --color-accent: #00d1ff;
+      --color-accent-2: #8b5cf6;
+      --color-surface: #ffffff;
+      --color-surface-dark: #fff6f9;
+      --color-bg: linear-gradient(180deg, #fff7fb 0%, #fffef6 100%);
+      --color-text-primary: #0b1020;
+      --color-text-secondary: #4b5563;
+      --color-border: rgba(11,16,32,0.06);
+      --color-shadow: rgba(11,16,32,0.12);
+      --color-success: #10b981;
+      --color-error: #ef4444;
+      --spacing-xs: 0.5rem;
+      --spacing-sm: 1rem;
+      --spacing-md: 1.5rem;
+      --spacing-lg: 2rem;
+      --radius: 0.75rem;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: var(--color-bg);
+      color: var(--color-text-primary);
+      min-height: 100vh;
+    }
+
+    /* Component Switcher */
+    .component-selector {
+      position: fixed;
+      top: var(--spacing-sm);
+      right: var(--spacing-sm);
+      z-index: 1000;
+      display: flex;
+      gap: var(--spacing-xs);
+      background: var(--color-surface);
+      padding: var(--spacing-xs);
+      border-radius: var(--radius);
+      box-shadow: 0 2px 8px var(--color-shadow);
+    }
+
+    .component-btn {
+      padding: var(--spacing-xs) var(--spacing-sm);
+      border: 1px solid var(--color-border);
+      background: transparent;
+      border-radius: calc(var(--radius) - 0.25rem);
+      cursor: pointer;
+      font-size: 0.875rem;
+      transition: all 0.2s;
+    }
+
+    .component-btn.active {
+      background: var(--color-primary);
+      color: white;
+      border-color: var(--color-primary);
+    }
+
+    .component-btn:hover {
+      border-color: var(--color-primary);
+    }
+
+    /* Component Container */
+    .component-container {
+      display: none;
+    }
+
+    .component-container.visible {
+      display: block;
+    }
+
+    /* ===== GAMELIST COMPONENT ===== */
+    .gamelist-container {
+      padding: var(--spacing-lg);
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .page-title {
+      font-size: 2rem;
+      font-weight: 600;
+      margin-bottom: var(--spacing-lg);
+      color: var(--color-primary);
+    }
+
+    /* Search & Filter Section */
+    .search-filter-section {
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-md);
+      margin-bottom: var(--spacing-lg);
+    }
+
+    .search-bar {
+      display: flex;
+      align-items: center;
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius);
+      padding: var(--spacing-sm) var(--spacing-md);
+      gap: var(--spacing-sm);
+      box-shadow: 0 1px 3px var(--color-shadow);
+    }
+
+    .search-icon {
+      color: var(--color-text-secondary);
+      font-size: 1.2rem;
+    }
+
+    .search-input {
+      flex: 1;
+      border: none;
+      outline: none;
+      font-size: 1rem;
+      font-family: inherit;
+      color: var(--color-text-primary);
+    }
+
+    .search-input::placeholder {
+      color: var(--color-text-secondary);
+    }
+
+    .search-clear {
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 1.2rem;
+      color: var(--color-text-secondary);
+      transition: color 0.2s;
+    }
+
+    .search-clear:hover {
+      color: var(--color-text-primary);
+    }
+
+    .filter-chips {
+      display: flex;
+      gap: var(--spacing-sm);
+      flex-wrap: wrap;
+      align-items: center;
+      min-height: 44px;
+    }
+
+    .chip {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-xs);
+      padding: var(--spacing-xs) var(--spacing-sm);
+      background: var(--color-primary-light);
+      color: white;
+      border-radius: 20px;
+      font-size: 0.9rem;
+      animation: slideIn 0.2s ease;
+    }
+
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateX(-10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    .chip-remove {
+      background: none;
+      border: none;
+      color: white;
+      cursor: pointer;
+      font-size: 1rem;
+      padding: 0;
+      width: 20px;
+      height: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.2s;
+    }
+
+    .chip-remove:hover {
+      transform: scale(1.2);
+    }
+
+    .chip-clear-all {
+      padding: var(--spacing-xs) var(--spacing-sm);
+      background: var(--color-surface-dark);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius);
+      cursor: pointer;
+      font-size: 0.85rem;
+      color: var(--color-text-secondary);
+      transition: all 0.2s;
+    }
+
+    .chip-clear-all:hover {
+      background: var(--color-surface);
+      color: var(--color-text-primary);
+      border-color: var(--color-text-secondary);
+    }
+
+    .filter-button {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-xs);
+      padding: var(--spacing-xs) var(--spacing-md);
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius);
+      cursor: pointer;
+      font-size: 0.95rem;
+      color: var(--color-text-primary);
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+
+    .filter-button:hover {
+      border-color: var(--color-primary);
+      color: var(--color-primary);
+    }
+
+    .filter-button.active {
+      background: var(--color-primary);
+      color: white;
+      border-color: var(--color-primary);
+    }
+
+    .filter-count {
+      background: rgba(255,255,255,0.3);
+      padding: 2px 6px;
+      border-radius: 10px;
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+
+    /* Filter Panel */
+    .filter-panel {
+      position: fixed;
+      right: -350px;
+      top: 0;
+      width: 350px;
+      height: 100vh;
+      background: var(--color-surface);
+      border-left: 1px solid var(--color-border);
+      box-shadow: -4px 0 12px var(--color-shadow);
+      padding: var(--spacing-lg);
+      overflow-y: auto;
+      transition: right 0.3s ease;
+      z-index: 100;
+    }
+
+    .filter-panel.visible {
+      right: 0;
+    }
+
+    .filter-panel-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: var(--spacing-lg);
+      font-size: 1.1rem;
+      font-weight: 600;
+    }
+
+    .filter-close-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 1.5rem;
+      color: var(--color-text-secondary);
+    }
+
+    .filter-group {
+      margin-bottom: var(--spacing-lg);
+    }
+
+    .filter-group-title {
+      font-weight: 600;
+      margin-bottom: var(--spacing-sm);
+      font-size: 0.95rem;
+      color: var(--color-text-primary);
+    }
+
+    .filter-options {
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-sm);
+    }
+
+    .filter-option {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-sm);
+      cursor: pointer;
+      padding: var(--spacing-xs) 0;
+    }
+
+    .filter-option input {
+      cursor: pointer;
+    }
+
+    .filter-option label {
+      cursor: pointer;
+      flex: 1;
+      font-size: 0.95rem;
+    }
+
+    .filter-actions {
+      display: flex;
+      gap: var(--spacing-sm);
+      margin-top: var(--spacing-lg);
+      padding-top: var(--spacing-lg);
+      border-top: 1px solid var(--color-border);
+    }
+
+    .filter-apply,
+    .filter-reset {
+      flex: 1;
+      padding: var(--spacing-sm);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius);
+      cursor: pointer;
+      font-weight: 500;
+      transition: all 0.2s;
+    }
+
+    .filter-apply {
+      background: var(--color-primary);
+      color: white;
+      border-color: var(--color-primary);
+    }
+
+    .filter-apply:hover {
+      background: var(--color-primary-light);
+    }
+
+    .filter-reset {
+      background: transparent;
+      color: var(--color-text-secondary);
+    }
+
+    .filter-reset:hover {
+      background: var(--color-surface-dark);
+      color: var(--color-text-primary);
+    }
+
+    /* Filter Overlay */
+    .filter-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(11,16,32,0.3);
+      display: none;
+      z-index: 50;
+    }
+
+    .filter-overlay.visible {
+      display: block;
+    }
+
+    /* Game Grid */
+    .game-grid {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: var(--spacing-lg);
+      margin-bottom: var(--spacing-lg);
+    }
+
+    @media (max-width: 1024px) {
+      .game-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: var(--spacing-md);
+      }
+    }
+
+    @media (max-width: 768px) {
+      .game-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: var(--spacing-md);
+      }
+    }
+
+    @media (max-width: 360px) {
+      .game-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .game-card {
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 1px 3px var(--color-shadow);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .game-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 16px var(--color-shadow);
+      border-color: var(--color-primary);
+    }
+
+    .game-image {
+      width: 100%;
+      aspect-ratio: 1;
+      background: linear-gradient(135deg, var(--color-secondary), var(--color-accent));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 3rem;
+      color: var(--color-text-primary);
+    }
+
+    .game-info {
+      padding: var(--spacing-md);
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-xs);
+    }
+
+    .game-name {
+      font-weight: 600;
+      font-size: 1rem;
+      color: var(--color-text-primary);
+      line-height: 1.3;
+    }
+
+    .game-meta {
+      font-size: 0.85rem;
+      color: var(--color-text-secondary);
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .game-meta-item {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    /* Pagination */
+    .pagination {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--spacing-sm);
+      margin-top: var(--spacing-lg);
+    }
+
+    .pagination-btn,
+    .pagination-page {
+      padding: var(--spacing-xs) var(--spacing-sm);
+      border: 1px solid var(--color-border);
+      background: var(--color-surface);
+      border-radius: var(--radius);
+      cursor: pointer;
+      font-size: 0.9rem;
+      transition: all 0.2s;
+      color: var(--color-text-primary);
+    }
+
+    .pagination-btn:hover:not(:disabled) {
+      border-color: var(--color-primary);
+      color: var(--color-primary);
+    }
+
+    .pagination-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .pagination-page.active {
+      background: var(--color-primary);
+      color: white;
+      border-color: var(--color-primary);
+    }
+
+    /* ===== JOINROOM COMPONENT ===== */
+    .joinroom-container {
+      padding: var(--spacing-lg);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .card {
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius);
+      padding: var(--spacing-lg);
+      box-shadow: 0 4px 12px var(--color-shadow);
+      width: 100%;
+      max-width: 500px;
+    }
+
+    .card-title {
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin-bottom: var(--spacing-md);
+      color: var(--color-text-primary);
+    }
+
+    .form-group {
+      margin-bottom: var(--spacing-md);
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-sm);
+    }
+
+    .form-label {
+      font-weight: 500;
+      font-size: 0.95rem;
+      color: var(--color-text-primary);
+    }
+
+    .form-label-required {
+      color: var(--color-error);
+    }
+
+    .input-wrapper {
+      display: flex;
+      gap: var(--spacing-xs);
+    }
+
+    .text-input {
+      flex: 1;
+      padding: var(--spacing-sm);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius);
+      font-size: 0.95rem;
+      font-family: 'Courier New', monospace;
+      color: var(--color-text-primary);
+      transition: all 0.2s;
+    }
+
+    .text-input:focus {
+      outline: none;
+      border-color: var(--color-primary);
+      box-shadow: 0 0 0 3px rgba(255, 59, 129, 0.1);
+    }
+
+    .text-input:disabled {
+      background: var(--color-surface-dark);
+      color: var(--color-text-secondary);
+    }
+
+    .copy-btn {
+      padding: var(--spacing-sm);
+      background: var(--color-primary-light);
+      color: white;
+      border: none;
+      border-radius: var(--radius);
+      cursor: pointer;
+      font-weight: 500;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+
+    .copy-btn:hover {
+      background: var(--color-primary);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(255, 59, 129, 0.3);
+    }
+
+    .copy-btn.copied {
+      background: var(--color-success);
+    }
+
+    .input-error {
+      font-size: 0.85rem;
+      color: var(--color-error);
+      margin-top: 4px;
+      display: none;
+    }
+
+    .input-error.visible {
+      display: block;
+    }
+
+    .input-success {
+      font-size: 0.85rem;
+      color: var(--color-success);
+      margin-top: 4px;
+      display: none;
+    }
+
+    .input-success.visible {
+      display: block;
+    }
+
+    /* Checkbox */
+    .checkbox-group {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-sm);
+      padding: var(--spacing-sm);
+      background: var(--color-surface-dark);
+      border-radius: var(--radius);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .checkbox-group:hover {
+      background: rgba(255, 59, 129, 0.05);
+    }
+
+    .checkbox-input {
+      width: 20px;
+      height: 20px;
+      cursor: pointer;
+      accent-color: var(--color-primary);
+    }
+
+    .checkbox-label {
+      flex: 1;
+      cursor: pointer;
+      font-size: 0.95rem;
+      color: var(--color-text-primary);
+    }
+
+    .checkbox-description {
+      font-size: 0.8rem;
+      color: var(--color-text-secondary);
+      margin-top: 4px;
+    }
+
+    /* Buttons */
+    .button-group {
+      display: flex;
+      gap: var(--spacing-sm);
+      margin-top: var(--spacing-lg);
+    }
+
+    .btn {
+      flex: 1;
+      padding: var(--spacing-sm) var(--spacing-md);
+      border: none;
+      border-radius: var(--radius);
+      font-size: 1rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-align: center;
+    }
+
+    .btn-primary {
+      background: var(--color-primary);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: var(--color-primary-light);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(255, 59, 129, 0.3);
+    }
+
+    .btn-primary:disabled {
+      background: var(--color-text-secondary);
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .btn-secondary {
+      background: var(--color-surface-dark);
+      color: var(--color-text-primary);
+      border: 1px solid var(--color-border);
+    }
+
+    .btn-secondary:hover {
+      background: var(--color-border);
+      border-color: var(--color-text-secondary);
+    }
+
+    /* Divider */
+    .divider {
+      height: 1px;
+      background: var(--color-border);
+      margin: var(--spacing-lg) 0;
+    }
+
+    /* Info Box */
+    .info-box {
+      background: rgba(0, 209, 255, 0.1);
+      border-left: 4px solid var(--color-accent);
+      padding: var(--spacing-md);
+      border-radius: calc(var(--radius) - 2px);
+      font-size: 0.9rem;
+      color: var(--color-text-secondary);
+      margin-top: var(--spacing-lg);
+    }
+
+    .info-box strong {
+      color: var(--color-text-primary);
+    }
+
+    /* Scenario Section */
+    .scenario {
+      margin-top: var(--spacing-lg);
+      padding-top: var(--spacing-lg);
+      border-top: 1px solid var(--color-border);
+    }
+
+    .scenario-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-bottom: var(--spacing-sm);
+      color: var(--color-accent);
+    }
+
+    .scenario-text {
+      font-size: 0.9rem;
+      color: var(--color-text-secondary);
+      line-height: 1.6;
+      margin-bottom: var(--spacing-md);
+    }
+
+    .mock-url {
+      background: var(--color-surface-dark);
+      padding: var(--spacing-sm);
+      border-radius: calc(var(--radius) - 2px);
+      font-family: 'Courier New', monospace;
+      font-size: 0.85rem;
+      color: var(--color-text-primary);
+      word-break: break-all;
+      border: 1px solid var(--color-border);
+    }
+
+    /* Demo Info */
+    .demo-info {
+      background: var(--color-surface);
+      padding: var(--spacing-md);
+      border-radius: var(--radius);
+      border-left: 4px solid var(--color-primary);
+      margin-bottom: var(--spacing-lg);
+      font-size: 0.9rem;
+      color: var(--color-text-secondary);
+    }
+
+    @media (max-width: 600px) {
+      .card {
+        padding: var(--spacing-md);
+      }
+
+      .button-group {
+        flex-direction: column;
+      }
+
+      .input-wrapper {
+        flex-direction: column;
+      }
+
+      .copy-btn {
+        width: 100%;
+      }
+
+      .component-selector {
+        flex-direction: column;
+      }
+
+      .component-btn {
+        font-size: 0.75rem;
+        padding: 0.25rem 0.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Component Switcher -->
+<div class="component-selector">
+  <button class="component-btn active" data-component="gamelist" onclick="showComponent('gamelist', event)">GameListGrid</button>
+  <button class="component-btn" data-component="joinroom" onclick="showComponent('joinroom', event)">JoinRoom</button>
+</div>
+
+<!-- ===== GAMELIST COMPONENT ===== -->
+<div id="gamelist" class="component-container visible">
+  <div class="gamelist-container">
+    <div class="container">
+      <div class="page-title">🎮 Danh sách trò chơi</div>
+
+      <div class="demo-info">
+        <strong>Demo Thông tin:</strong> Nhấp vào nút "Bộ lọc" để xem bảng điều khiển bộ lọc. Nhấp vào thẻ trò chơi để mô phỏng mở CreateRoomModal.
+      </div>
+
+      <!-- Search & Filter Section -->
+      <div class="search-filter-section">
+        <!-- Search Bar -->
+        <div class="search-bar">
+          <span class="search-icon">🔍</span>
+          <input type="text" class="search-input" placeholder="Tìm kiếm trò chơi...">
+          <button class="search-clear">❌</button>
+        </div>
+
+        <!-- Filter Button & Active Chips -->
+        <div style="display: flex; gap: var(--spacing-sm); align-items: center; flex-wrap: wrap;">
+          <button class="filter-button" onclick="toggleFilterPanel()">
+            🎯 Bộ lọc
+          </button>
+
+          <div class="filter-chips">
+            <div class="chip">
+              2-4 người chơi
+              <button class="chip-remove">❌</button>
+            </div>
+            <div class="chip">
+              <30 phút
+              <button class="chip-remove">❌</button>
+            </div>
+            <div class="chip">
+              Nhẹ
+              <button class="chip-remove">❌</button>
+            </div>
+            <button class="chip-clear-all">Xóa tất cả</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Game Grid -->
+      <div class="game-grid">
+        <!-- Game Card 1 -->
+        <div class="game-card" onclick="alert('Mở CreateRoomModal với trò chơi này')">
+          <div class="game-image">♠</div>
+          <div class="game-info">
+            <div class="game-name">Spades</div>
+            <div class="game-meta">
+              <div class="game-meta-item">👥 2-4 người chơi</div>
+              <div class="game-meta-item">⏱️ 30-60 phút</div>
+              <div class="game-meta-item">🎯 Nhẹ</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Game Card 2 -->
+        <div class="game-card" onclick="alert('Mở CreateRoomModal với trò chơi này')">
+          <div class="game-image">🎲</div>
+          <div class="game-info">
+            <div class="game-name">Dice Throne</div>
+            <div class="game-meta">
+              <div class="game-meta-item">👥 2-6 người chơi</div>
+              <div class="game-meta-item">⏱️ 30-45 phút</div>
+              <div class="game-meta-item">🎯 Trung bình</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Game Card 3 -->
+        <div class="game-card" onclick="alert('Mở CreateRoomModal với trò chơi này')">
+          <div class="game-image">🏰</div>
+          <div class="game-info">
+            <div class="game-name">Carcassonne</div>
+            <div class="game-meta">
+              <div class="game-meta-item">👥 2-5 người chơi</div>
+              <div class="game-meta-item">⏱️ 30-60 phút</div>
+              <div class="game-meta-item">🎯 Nhẹ</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Game Card 4 -->
+        <div class="game-card" onclick="alert('Mở CreateRoomModal với trò chơi này')">
+          <div class="game-image">♥</div>
+          <div class="game-info">
+            <div class="game-name">Love Letter</div>
+            <div class="game-meta">
+              <div class="game-meta-item">👥 2-4 người chơi</div>
+              <div class="game-meta-item">⏱️ 15-20 phút</div>
+              <div class="game-meta-item">🎯 Nhẹ</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Game Card 5 -->
+        <div class="game-card" onclick="alert('Mở CreateRoomModal với trò chơi này')">
+          <div class="game-image">🐯</div>
+          <div class="game-info">
+            <div class="game-name">Codenames</div>
+            <div class="game-meta">
+              <div class="game-meta-item">👥 2-8 người chơi</div>
+              <div class="game-meta-item">⏱️ 15-30 phút</div>
+              <div class="game-meta-item">🎯 Nhẹ</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Game Card 6 -->
+        <div class="game-card" onclick="alert('Mở CreateRoomModal với trò chơi này')">
+          <div class="game-image">🏛️</div>
+          <div class="game-info">
+            <div class="game-name">7 Wonders</div>
+            <div class="game-meta">
+              <div class="game-meta-item">👥 2-7 người chơi</div>
+              <div class="game-meta-item">⏱️ 45-60 phút</div>
+              <div class="game-meta-item">🎯 Trung bình</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Game Card 7 -->
+        <div class="game-card" onclick="alert('Mở CreateRoomModal với trò chơi này')">
+          <div class="game-image">🎭</div>
+          <div class="game-info">
+            <div class="game-name">Ticket to Ride</div>
+            <div class="game-meta">
+              <div class="game-meta-item">👥 2-5 người chơi</div>
+              <div class="game-meta-item">⏱️ 60-90 phút</div>
+              <div class="game-meta-item">🎯 Trung bình</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Game Card 8 -->
+        <div class="game-card" onclick="alert('Mở CreateRoomModal với trò chơi này')">
+          <div class="game-image">🧩</div>
+          <div class="game-info">
+            <div class="game-name">Pandemic</div>
+            <div class="game-meta">
+              <div class="game-meta-item">👥 2-4 người chơi</div>
+              <div class="game-meta-item">⏱️ 45-60 phút</div>
+              <div class="game-meta-item">🎯 Trung bình</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Pagination -->
+      <div class="pagination">
+        <button class="pagination-btn">◀ Trước</button>
+        <button class="pagination-page active">1</button>
+        <button class="pagination-page">2</button>
+        <button class="pagination-page">3</button>
+        <button class="pagination-btn">Tiếp ▶</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Filter Panel -->
+  <div class="filter-overlay" id="filterOverlay" onclick="closeFilterPanel()"></div>
+  <div class="filter-panel" id="filterPanel">
+    <div class="filter-panel-header">
+      <span>Bộ lọc</span>
+      <button class="filter-close-btn" onclick="closeFilterPanel()">✕</button>
+    </div>
+
+    <!-- Tier 1: Player Count -->
+    <div class="filter-group">
+      <div class="filter-group-title">Số người chơi</div>
+      <div class="filter-options">
+        <div class="filter-option">
+          <input type="checkbox" id="players1" checked>
+          <label for="players1">1 người chơi</label>
+        </div>
+        <div class="filter-option">
+          <input type="checkbox" id="players2" checked>
+          <label for="players2">2 người chơi</label>
+        </div>
+        <div class="filter-option">
+          <input type="checkbox" id="players3" checked>
+          <label for="players3">3 người chơi</label>
+        </div>
+        <div class="filter-option">
+          <input type="checkbox" id="players4" checked>
+          <label for="players4">4 người chơi</label>
+        </div>
+        <div class="filter-option">
+          <input type="checkbox" id="players5">
+          <label for="players5">5 người chơi</label>
+        </div>
+        <div class="filter-option">
+          <input type="checkbox" id="players6plus">
+          <label for="players6plus">6+ người chơi</label>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tier 1: Playtime -->
+    <div class="filter-group">
+      <div class="filter-group-title">Thời gian chơi</div>
+      <div class="filter-options">
+        <div class="filter-option">
+          <input type="radio" id="time1" name="playtime" checked>
+          <label for="time1">&lt; 30 phút</label>
+        </div>
+        <div class="filter-option">
+          <input type="radio" id="time2" name="playtime">
+          <label for="time2">30-60 phút</label>
+        </div>
+        <div class="filter-option">
+          <input type="radio" id="time3" name="playtime">
+          <label for="time3">60-120 phút</label>
+        </div>
+        <div class="filter-option">
+          <input type="radio" id="time4" name="playtime">
+          <label for="time4">&gt; 120 phút</label>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tier 2: Complexity -->
+    <div class="filter-group">
+      <div class="filter-group-title">Độ phức tạp</div>
+      <div class="filter-options">
+        <div class="filter-option">
+          <input type="radio" id="complex1" name="complexity" checked>
+          <label for="complex1">Nhẹ</label>
+        </div>
+        <div class="filter-option">
+          <input type="radio" id="complex2" name="complexity">
+          <label for="complex2">Trung bình</label>
+        </div>
+        <div class="filter-option">
+          <input type="radio" id="complex3" name="complexity">
+          <label for="complex3">Nặng</label>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tier 2: Category -->
+    <div class="filter-group">
+      <div class="filter-group-title">Thể loại</div>
+      <div class="filter-options">
+        <div class="filter-option">
+          <input type="checkbox" id="cat1" checked>
+          <label for="cat1">Chiến lược</label>
+        </div>
+        <div class="filter-option">
+          <input type="checkbox" id="cat2">
+          <label for="cat2">Đảng phái</label>
+        </div>
+        <div class="filter-option">
+          <input type="checkbox" id="cat3">
+          <label for="cat3">Hợp tác</label>
+        </div>
+        <div class="filter-option">
+          <input type="checkbox" id="cat4">
+          <label for="cat4">Xây dựng bộ bài</label>
+        </div>
+        <div class="filter-option">
+          <input type="checkbox" id="cat5">
+          <label for="cat5">Thống trị công nhân</label>
+        </div>
+        <div class="filter-option">
+          <input type="checkbox" id="cat6">
+          <label for="cat6">Solo</label>
+        </div>
+      </div>
+    </div>
+
+    <!-- Filter Actions -->
+    <div class="filter-actions">
+      <button class="filter-apply" onclick="applyFilters()">Áp dụng</button>
+      <button class="filter-reset" onclick="resetFilters()">Đặt lại</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== JOINROOM COMPONENT ===== -->
+<div id="joinroom" class="component-container">
+  <div class="joinroom-container">
+    <div class="card">
+      <h2 class="card-title">Tham gia phòng</h2>
+
+      <form id="joinForm">
+        <!-- URL Input -->
+        <div class="form-group">
+          <label for="roomUrl" class="form-label">
+            Liên kết phòng <span class="form-label-required">*</span>
+          </label>
+          <div class="input-wrapper">
+            <input 
+              type="text" 
+              id="roomUrl" 
+              class="text-input" 
+              placeholder="Dán liên kết phòng ở đây"
+              value=""
+            >
+            <button type="button" class="copy-btn" onclick="copyToClipboard()">Sao chép</button>
+          </div>
+          <div class="input-error" id="urlError">Liên kết phòng không hợp lệ</div>
+          <div class="input-success" id="urlSuccess">✓ Liên kết hợp lệ</div>
+        </div>
+
+        <!-- Spectator Checkbox -->
+        <div class="form-group">
+          <label class="checkbox-group" onclick="toggleSpectator()">
+            <input 
+              type="checkbox" 
+              id="spectatorMode" 
+              class="checkbox-input"
+            >
+            <div style="flex: 1;">
+              <div class="checkbox-label">Tham gia với tư cách khán giả</div>
+              <div class="checkbox-description">Quan sát trò chơi mà không ảnh hưởng đến gameplay</div>
+            </div>
+          </label>
+        </div>
+
+        <!-- Divider -->
+        <div class="divider"></div>
+
+        <!-- Join Buttons -->
+        <div class="button-group">
+          <button type="submit" class="btn btn-primary" onclick="handleJoin(event)">
+            Tham gia
+          </button>
+          <button type="button" class="btn btn-secondary" onclick="clearForm()">
+            Xóa
+          </button>
+        </div>
+      </form>
+
+      <!-- Info -->
+      <div class="info-box">
+        <strong>Mẹo:</strong> Nếu bạn mở liên kết mời từ browser, URL sẽ tự động điền vào trường này.
+      </div>
+
+      <!-- Demo Scenarios -->
+      <div class="scenario">
+        <div class="scenario-title">📋 Kịch bản Demo</div>
+
+        <!-- Scenario 1 -->
+        <div style="margin-bottom: var(--spacing-md);">
+          <div class="scenario-text"><strong>1. Dán liên kết thủ công (Người chơi):</strong></div>
+          <div class="mock-url">https://boardgamehub.com/i/ABCD-1234</div>
+          <button type="button" class="btn btn-secondary" style="width: 100%; margin-top: var(--spacing-sm);" onclick="fillUrlScenario1()">
+            Dán liên kết này
+          </button>
+        </div>
+
+        <!-- Scenario 2 -->
+        <div style="margin-bottom: var(--spacing-md);">
+          <div class="scenario-text"><strong>2. Dán liên kết thủ công (Khán giả):</strong></div>
+          <div class="mock-url">https://boardgamehub.com/i/ABCD-1234</div>
+          <button type="button" class="btn btn-secondary" style="width: 100%; margin-top: var(--spacing-sm);" onclick="fillUrlScenario2()">
+            Dán liên kết + chọn khán giả
+          </button>
+        </div>
+
+        <!-- Scenario 3 -->
+        <div>
+          <div class="scenario-text"><strong>3. Mở liên kết mời (Auto-paste):</strong></div>
+          <div class="mock-url">Khi mở: https://boardgamehub.com/i/ABCD-1234</div>
+          <div class="scenario-text" style="margin-top: var(--spacing-sm); font-size: 0.85rem; color: var(--color-accent);">
+            → Trang sẽ cuộn xuống JoinRoom<br>
+            → URL sẽ tự động điền vào trường này
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // ===== COMPONENT SWITCHER =====
+  function showComponent(component, evt) {
+    document.querySelectorAll('.component-container').forEach(el => {
+      el.classList.remove('visible');
+    });
+    document.getElementById(component).classList.add('visible');
+
+    document.querySelectorAll('.component-btn').forEach(btn => {
+      btn.classList.remove('active');
+    });
+
+    const btn = (evt && evt.target)
+      ? evt.target
+      : document.querySelector(`.component-btn[data-component="${component}"]`);
+    if (btn) btn.classList.add('active');
+  }
+
+  // ===== GAMELIST FUNCTIONS =====
+  function toggleFilterPanel() {
+    const panel = document.getElementById('filterPanel');
+    const overlay = document.getElementById('filterOverlay');
+    panel.classList.toggle('visible');
+    overlay.classList.toggle('visible');
+  }
+
+  function closeFilterPanel() {
+    document.getElementById('filterPanel').classList.remove('visible');
+    document.getElementById('filterOverlay').classList.remove('visible');
+  }
+
+  function applyFilters() {
+    alert('Bộ lọc được áp dụng!');
+    closeFilterPanel();
+  }
+
+  function resetFilters() {
+    document.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = false);
+    document.querySelectorAll('input[type="radio"]').forEach(rb => rb.checked = false);
+  }
+
+  // ===== JOINROOM FUNCTIONS =====
+  const urlInput = document.getElementById('roomUrl');
+  const spectatorCheckbox = document.getElementById('spectatorMode');
+  const urlError = document.getElementById('urlError');
+  const urlSuccess = document.getElementById('urlSuccess');
+
+  // URL validation
+  urlInput.addEventListener('input', () => {
+    validateUrl();
+  });
+
+  function validateUrl() {
+    const value = urlInput.value.trim();
+    const isValid = /^https:\/\/boardgamehub\.com\/r\/[A-Z0-9\-]+$/.test(value);
+
+    if (value === '') {
+      urlError.classList.remove('visible');
+      urlSuccess.classList.remove('visible');
+    } else if (isValid) {
+      urlError.classList.remove('visible');
+      urlSuccess.classList.add('visible');
+    } else {
+      urlError.classList.add('visible');
+      urlSuccess.classList.remove('visible');
+    }
+
+    return isValid;
+  }
+
+  function toggleSpectator() {
+    spectatorCheckbox.checked = !spectatorCheckbox.checked;
+  }
+
+  function handleJoin(e) {
+    e.preventDefault();
+    if (!validateUrl()) {
+      alert('Vui lòng nhập liên kết phòng hợp lệ');
+      return;
+    }
+
+    const mode = spectatorCheckbox.checked ? 'khán giả' : 'người chơi';
+    alert(`Tham gia phòng với tư cách ${mode}!`);
+  }
+
+  function clearForm() {
+    urlInput.value = '';
+    spectatorCheckbox.checked = false;
+    urlError.classList.remove('visible');
+    urlSuccess.classList.remove('visible');
+  }
+
+  function copyToClipboard() {
+    if (urlInput.value) {
+      navigator.clipboard.writeText(urlInput.value).then(() => {
+        const btn = event.target;
+        const originalText = btn.textContent;
+        btn.textContent = '✓ Đã sao chép';
+        btn.classList.add('copied');
+        setTimeout(() => {
+          btn.textContent = originalText;
+          btn.classList.remove('copied');
+        }, 2000);
+      });
+    }
+  }
+
+  function fillUrlScenario1() {
+    urlInput.value = 'https://boardgamehub.com/i/ABCD-1234';
+    spectatorCheckbox.checked = false;
+    validateUrl();
+    urlInput.focus();
+  }
+
+  function fillUrlScenario2() {
+    urlInput.value = 'https://boardgamehub.com/i/ABCD-1234';
+    spectatorCheckbox.checked = true;
+    validateUrl();
+    urlInput.focus();
+  }
+
+  // Simulate invite URL auto-paste + auto-scroll to JoinRoom (scrollIntoView)
+  window.addEventListener('load', () => {
+    const path = window.location.pathname || '';
+    const hash = window.location.hash || '';
+
+    const match = path.match(/\/r\/([^\/?#]+)/) || hash.match(/\/r\/([^\/?#]+)/);
+    if (!match) return;
+
+    const roomId = match[1];
+    showComponent('joinroom');
+    urlInput.value = `https://boardgamehub.com/i/${roomId}`;
+    validateUrl();
+    const joinRoot = document.getElementById('joinroom');
+    if (joinRoot) joinRoot.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    urlInput.focus();
+  });
+</script>
+
+</body>
+</html>

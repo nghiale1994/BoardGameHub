@@ -1,0 +1,12 @@
+{
+  "name": "check-conventions",
+  "description": "Check TypeScript/React conventions in hub code",
+  "parameters": {
+    "filePaths": {
+      "type": "array",
+      "description": "List of TypeScript files to check"
+    }
+  },
+  "dryRun": true,
+  "output": "List of convention violations"
+}

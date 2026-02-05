@@ -1,0 +1,66 @@
+spells:
+  - id: fireball
+        name: Fireball
+        level: 1
+        type: attack
+        description: Deal 3 damage to an enemy in range. Spend up to 2 additional Red Gems to deal +2 damage each.
+        flavor-text: A blazing sphere of fire that engulfs its target.
+        collection-cost:
+          gem:
+            color: red
+            amount: 1
+          orb:
+            color: red
+            amount: 1
+        casting-cost:
+          gem:
+            color: red
+            amount: 1
+        range: self
+        target-type: adjacent
+        effect-type: enemy
+  - id: lightning-storm
+        name: Lightning Storm
+        level: 2
+        type: attack
+        description: Deal 4 damage to all enemies on target hex. Spend up to 3 additional Blue Gems to deal +1 damage each.
+        flavor-text: Crackling bolts of lightning rain down upon the battlefield.
+        collection-cost:
+          gem:
+            color: blue
+            amount: 2
+          orb:
+            color: blue
+            amount: 1
+          spell-level: 1
+        casting-cost:
+          gem:
+            color: blue
+            amount: 2
+        range: self
+        target-type: range2
+        effect-type: hex
+  - id: resource-converter
+        name: Resource Converter
+        level: 1
+        type: conversion
+        description: Convert 1 Cursed Crystal into 1 Shadow Fragment.
+        flavor-text: Harness the chaotic energy of cursed crystals.
+        collection-cost:
+          gem:
+            color: purple
+            amount: 1
+        casting-cost:
+          gem:
+            color: purple
+            amount: 1
+        range: self
+        target-type: self
+        effect-type: convert
+        conversion:
+          from:
+            type: curseCrystal
+            amount: 1
+          to:
+            type: shadowFragment
+            amount: 1

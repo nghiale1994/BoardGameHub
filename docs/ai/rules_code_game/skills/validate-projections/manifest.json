@@ -1,0 +1,12 @@
+{
+  "name": "validate-projections",
+  "description": "Validate that game code emits only allowed room-level projections",
+  "parameters": {
+    "filePath": {
+      "type": "string",
+      "description": "Path to the game code file to validate"
+    }
+  },
+  "dryRun": true,
+  "output": "Projection validation report"
+}

@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<!-- NOTE: AI must read docs/ai/README.md before modifying this file. -->
+<!-- Mockup Index - All UI Components -->
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BoardGame Hub - Mockup Collection</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --color-primary: #ff3b81;
+      --color-primary-light: #ff6fa3;
+      --color-secondary: #ffd200;
+      --color-accent: #00d1ff;
+      --color-accent-2: #8b5cf6;
+      --color-surface: #ffffff;
+      --color-surface-dark: #fff6f9;
+      --color-bg: linear-gradient(180deg, #fff7fb 0%, #fffef6 100%);
+      --color-text-primary: #0b1020;
+      --color-text-secondary: #4b5563;
+      --color-border: rgba(11,16,32,0.06);
+      --color-shadow: rgba(11,16,32,0.12);
+      --spacing-xs: 0.5rem;
+      --spacing-sm: 1rem;
+      --spacing-md: 1.5rem;
+      --spacing-lg: 2rem;
+      --radius: 0.75rem;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: var(--color-bg);
+      color: var(--color-text-primary);
+      padding: var(--spacing-lg);
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: var(--spacing-lg);
+    }
+
+    .header-title {
+      font-size: 3rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--color-primary), var(--color-accent-2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: var(--spacing-sm);
+    }
+
+    .header-subtitle {
+      font-size: 1.2rem;
+      color: var(--color-text-secondary);
+      margin-bottom: var(--spacing-md);
+    }
+
+    .header-description {
+      font-size: 1rem;
+      color: var(--color-text-secondary);
+      max-width: 600px;
+      margin: 0 auto;
+      line-height: 1.6;
+    }
+
+    .mockup-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: var(--spacing-lg);
+      margin-top: var(--spacing-lg);
+    }
+
+    .mockup-card {
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      box-shadow: 0 4px 12px var(--color-shadow);
+      transition: all 0.3s ease;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .mockup-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 12px 24px var(--color-shadow);
+      border-color: var(--color-primary);
+    }
+
+    .mockup-header {
+      padding: var(--spacing-lg);
+      background: linear-gradient(135deg, var(--color-surface-dark), var(--color-surface));
+      border-bottom: 2px solid var(--color-border);
+    }
+
+    .mockup-icon {
+      font-size: 3rem;
+      margin-bottom: var(--spacing-sm);
+    }
+
+    .mockup-title {
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: var(--color-text-primary);
+      margin-bottom: var(--spacing-xs);
+    }
+
+    .mockup-label {
+      font-size: 0.85rem;
+      color: var(--color-text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      font-weight: 500;
+    }
+
+    .mockup-body {
+      padding: var(--spacing-lg);
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .mockup-description {
+      font-size: 0.95rem;
+      color: var(--color-text-secondary);
+      line-height: 1.6;
+      margin-bottom: var(--spacing-md);
+      flex: 1;
+    }
+
+    .mockup-features {
+      font-size: 0.85rem;
+      color: var(--color-text-secondary);
+      margin-bottom: var(--spacing-md);
+    }
+
+    .mockup-feature {
+      padding: var(--spacing-xs) 0;
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-xs);
+    }
+
+    .feature-icon {
+      color: var(--color-primary);
+      font-weight: bold;
+    }
+
+    .mockup-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--spacing-sm);
+      padding: var(--spacing-sm) var(--spacing-md);
+      background: var(--color-primary);
+      color: white;
+      text-decoration: none;
+      border-radius: var(--radius);
+      font-weight: 500;
+      transition: all 0.2s;
+      width: 100%;
+      border: none;
+      cursor: pointer;
+      font-size: 1rem;
+    }
+
+    .mockup-link:hover {
+      background: var(--color-primary-light);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(255, 59, 129, 0.3);
+    }
+
+    .status-badge {
+      display: inline-block;
+      padding: var(--spacing-xs) var(--spacing-sm);
+      background: var(--color-secondary);
+      color: var(--color-text-primary);
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      margin-top: var(--spacing-sm);
+    }
+
+    .status-badge.responsive {
+      background: var(--color-accent);
+    }
+
+    .status-badge.interactive {
+      background: var(--color-accent-2);
+      color: white;
+    }
+
+    .footer {
+      text-align: center;
+      margin-top: var(--spacing-lg);
+      padding-top: var(--spacing-lg);
+      border-top: 1px solid var(--color-border);
+      color: var(--color-text-secondary);
+      font-size: 0.9rem;
+    }
+
+    .footer-link {
+      color: var(--color-primary);
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .footer-link:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <!-- Header -->
+  <div class="header">
+    <h1 class="header-title">🎮 BoardGame Hub Mockups</h1>
+    <p class="header-subtitle">Interactive UI Component Previews</p>
+    <p class="header-description">
+      Khám phá các mockup tương tác cho tất cả các thành phần chính của BoardGame Hub. 
+      Chọn một mockup dưới đây để xem thiết kế và hành vi UI.
+    </p>
+  </div>
+
+  <!-- Mockup Grid -->
+  <div class="mockup-grid">
+    <!-- HomePage -->
+    <div class="mockup-card">
+      <div class="mockup-header">
+        <div class="mockup-icon">🏠</div>
+        <h2 class="mockup-title">HomePage</h2>
+        <div class="mockup-label">Homepage Components</div>
+      </div>
+      <div class="mockup-body">
+        <p class="mockup-description">
+          Trang chủ đầy đủ với sidebar điều hướng, welcome section, game selector, và game grid.
+        </p>
+        <div class="mockup-features">
+          <div class="mockup-feature">
+            <span class="feature-icon">✓</span> Welcome banner
+          </div>
+          <div class="mockup-feature">
+            <span class="feature-icon">✓</span> Sidebar navigation
+          </div>
+          <div class="mockup-feature">
+            <span class="feature-icon">✓</span> CreateRoomModal
+          </div>
+          <div class="mockup-feature">
+            <span class="feature-icon">✓</span> Game browser
+          </div>
+        </div>
+        <div style="margin-top: auto;">
+          <div class="status-badge responsive">Responsive</div>
+          <div class="status-badge interactive">Interactive</div>
+        </div>
+        <a href="./HOMEPAGE_MOCKUP.html" class="mockup-link" target="_blank">
+          Xem Mockup →
+        </a>
+      </div>
+    </div>
+
+    <!-- GameListGrid -->
+    <div class="mockup-card">
+      <div class="mockup-header">
+        <div class="mockup-icon">🎲</div>
+        <h2 class="mockup-title">Game List Grid</h2>
+        <div class="mockup-label">Game Discovery & Filtering</div>
+      </div>
+      <div class="mockup-body">
+        <p class="mockup-description">
+          Lưới trò chơi có thể tìm kiếm với bộ lọc nâng cao (Tier 1+2): số người chơi, thời gian, độ phức tạp, thể loại.
+        </p>
+        <div class="mockup-features">
+          <div class="mockup-feature">
+            <span class="feature-icon">✓</span> Search by name
+          </div>
+          <div class="mockup-feature">
+            <span class="feature-icon">✓</span> Tier 1+2 filters
+          </div>
+          <div class="mockup-feature">
+            <span class="feature-icon">✓</span> Active filter chips
+          </div>
+          <div class="mockup-feature">
+            <span class="feature-icon">✓</span> Pagination
+          </div>
+        </div>
+        <div style="margin-top: auto;">
+          <div class="status-badge responsive">Responsive</div>
+          <div class="status-badge interactive">Interactive</div>
+        </div>
+        <a href="./GameList/GAMELIST_MOCKUP.html" class="mockup-link" target="_blank">
+          Xem Mockup →
+        </a>
+      </div>
+    </div>
+
+    <!-- JoinRoom -->
+    <div class="mockup-card">
+      <div class="mockup-header">
+        <div class="mockup-icon">🔗</div>
+        <h2 class="mockup-title">Join Room</h2>
+        <div class="mockup-label">Room Joining Experience</div>
+      </div>
+      <div class="mockup-body">
+        <p class="mockup-description">
+          Chế độ tham gia phòng với hỗ trợ khán giả, dán URL tự động và xác thực liên kết.
+        </p>
+        <div class="mockup-features">
+          <div class="mockup-feature">
+            <span class="feature-icon">✓</span> URL validation
+          </div>
+          <div class="mockup-feature">
+            <span class="feature-icon">✓</span> Spectator mode
+          </div>
+          <div class="mockup-feature">
+            <span class="feature-icon">✓</span> Auto-paste on link open
+          </div>
+          <div class="mockup-feature">
+            <span class="feature-icon">✓</span> Demo scenarios
+          </div>
+        </div>
+        <div style="margin-top: auto;">
+          <div class="status-badge responsive">Responsive</div>
+          <div class="status-badge interactive">Interactive</div>
+        </div>
+        <a href="./JoinRoom/JOINROOM_MOCKUP.html" class="mockup-link" target="_blank">
+          Xem Mockup →
+        </a>
+      </div>
+    </div>
+
+    <!-- GameRoom -->
+    <div class="mockup-card">
+      <div class="mockup-header">
+        <div class="mockup-icon">♠</div>
+        <h2 class="mockup-title">Game Room</h2>
+        <div class="mockup-label">In-Game Experience</div>
+      </div>
+      <div class="mockup-body">
+        <p class="mockup-description">
+          Trải nghiệm trong phòng chơi với danh sách người chơi/khán giả, bảng trò chơi, chat, và role toggle.
+        </p>
+        <div class="mockup-features">
+          <div class="mockup-feature">
+            <span class="feature-icon">✓</span> Players & spectators
+          </div>
+          <div class="mockup-feature">
+            <span class="feature-icon">✓</span> Role toggle button
+          </div>
+          <div class="mockup-feature">
+            <span class="feature-icon">✓</span> Responsive layouts
+          </div>
+          <div class="mockup-feature">
+            <span class="feature-icon">✓</span> Bottom sheet & floating chat
+          </div>
+        </div>
+        <div style="margin-top: auto;">
+          <div class="status-badge responsive">Responsive</div>
+          <div class="status-badge interactive">Interactive</div>
+        </div>
+        <a href="./GameRoom/GAMEROOM_MOCKUP.html" class="mockup-link" target="_blank">
+          Xem Mockup →
+        </a>
+      </div>
+    </div>
+
+    <!-- Components Library -->
+    <div class="mockup-card">
+      <div class="mockup-header">
+        <div class="mockup-icon">🎨</div>
+        <h2 class="mockup-title">Components Library</h2>
+        <div class="mockup-label">UI Component Reference</div>
+      </div>
+      <div class="mockup-body">
+        <p class="mockup-description">
+          Thư viện tất cả các thành phần UI chính được sử dụng trong ứng dụng với các biến thể khác nhau.
+        </p>
+        <div class="mockup-features">
+          <div class="mockup-feature">
+            <span class="feature-icon">✓</span> Sidebar navigation
+          </div>
+          <div class="mockup-feature">
+            <span class="feature-icon">✓</span> Modals & dialogs
+          </div>
+          <div class="mockup-feature">
+            <span class="feature-icon">✓</span> Form inputs
+          </div>
+          <div class="mockup-feature">
+            <span class="feature-icon">✓</span> Buttons & states
+          </div>
+        </div>
+        <div style="margin-top: auto;">
+          <div class="status-badge responsive">Responsive</div>
+        </div>
+        <a href="./COMPONENTS_MOCKUP.html" class="mockup-link" target="_blank">
+          Xem Mockup →
+        </a>
+      </div>
+    </div>
+
+    <!-- Theme Palette -->
+    <div class="mockup-card">
+      <div class="mockup-header">
+        <div class="mockup-icon">🎭</div>
+        <h2 class="mockup-title">Theme & Colors</h2>
+        <div class="mockup-label">Color Palette Preview</div>
+      </div>
+      <div class="mockup-body">
+        <p class="mockup-description">
+          Bản xem trước bảng màu chủ đề sáng và tối của ứng dụng với tất cả các token màu.
+        </p>
+        <div class="mockup-features">
+          <div class="mockup-feature">
+            <span class="feature-icon">✓</span> Bright palette
+          </div>
+          <div class="mockup-feature">
+            <span class="feature-icon">✓</span> Dark palette
+          </div>
+          <div class="mockup-feature">
+            <span class="feature-icon">✓</span> Color contrast
+          </div>
+          <div class="mockup-feature">
+            <span class="feature-icon">✓</span> Token reference
+          </div>
+        </div>
+        <div style="margin-top: auto;">
+          <div class="status-badge responsive">Responsive</div>
+        </div>
+        <a href="./palette_preview.html" class="mockup-link" target="_blank">
+          Xem Mockup →
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="footer">
+    <p>
+      📖 Xem thêm thông tin chi tiết tại <a href="../../docs" class="footer-link">docs/features</a>
+    </p>
+    <p style="margin-top: var(--spacing-sm); font-size: 0.85rem;">
+      Last updated: 2026-01-31 • All mockups are interactive prototypes
+    </p>
+  </div>
+</div>
+
+</body>
+</html>

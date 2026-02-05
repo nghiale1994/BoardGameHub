@@ -1,0 +1,14 @@
+{
+  "id": "propose-ambiguity-resolution",
+  "description": "When a requirement is ambiguous, generate a concise A/B/C options list with pros/cons and a single clarifying question to the user.",
+  "trigger": "event:ambiguityDetected",
+  "inputs": {
+    "context": { "type": "string", "description": "The ambiguous requirement text" }
+  },
+  "outputs": {
+    "options": { "type": "object[]", "description": "Array of option objects { id, summary, pros, cons }" },
+    "question": { "type": "string", "description": "Single direct question for user to choose" }
+  },
+  "permissions": ["ai:compose"],
+  "successCriteria": "Generated options cover plausible interpretations and the question is specific enough to unblock a choice."
+}

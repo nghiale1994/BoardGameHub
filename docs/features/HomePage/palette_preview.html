@@ -1,0 +1,60 @@
+<!-- NOTE: AI must read docs/ai/README.md before modifying this file. -->
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>HomePage Palette Preview</title>
+  <style>
+    :root{
+      --color-primary:#FF3B81;
+      --color-secondary:#FFD200;
+      --color-accent:#00D1FF;
+      --color-accent-2:#8B5CF6;
+      --color-surface:#FFFFFF;
+      --color-bg:#FFF7FB;
+      --color-text-primary:#0B1020;
+      --chip-bg: #FF6FA3;
+    }
+    body{font-family:Inter,system-ui,Segoe UI,Roboto,Arial;background:var(--color-bg);padding:24px;color:var(--color-text-primary)}
+    .layout{display:flex;gap:16px}
+    .sidebar{width:220px;background:var(--color-surface);padding:12px;border-radius:8px;box-shadow:0 10px 30px rgba(11,16,32,0.06)}
+    .hamburger{width:36px;height:36px;border-radius:8px;background:var(--color-primary);display:flex;align-items:center;justify-content:center;color:var(--color-text-primary);font-weight:800}
+    .content{flex:1}
+    .welcome{background:var(--color-surface);padding:16px;border-radius:10px;box-shadow:0 8px 18px rgba(11,16,32,0.06)}
+    .cards{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:12px}
+    .card{background:linear-gradient(180deg,var(--color-surface),#fff);padding:12px;border-radius:10px}
+    .chip{display:inline-block;padding:6px 8px;border-radius:999px;background:var(--chip-bg);color:var(--color-text-primary);font-weight:700}
+  </style>
+</head>
+<body>
+  <div style="max-width:1100px;margin:0 auto">
+    <h2>HomePage Palette Demo</h2>
+    <div class="layout">
+      <aside class="sidebar">
+        <div class="hamburger">≡</div>
+        <div style="margin-top:12px">Language</div>
+        <div style="margin-top:8px">Theme</div>
+      </aside>
+      <main class="content">
+        <div class="welcome">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <div>
+              <div style="font-weight:800;font-size:1.1rem">Welcome back, Player</div>
+              <div style="color:#6B7280">Ready to play?</div>
+            </div>
+            <div class="chip">New</div>
+          </div>
+          <div class="cards">
+            <div class="card">Game 1</div>
+            <div class="card">Game 2</div>
+            <div class="card">Game 3</div>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <p style="color:#6B7280;margin-top:14px">Preview files: <a href="../theme/palette_preview_bright.html">bright</a> • <a href="../theme/palette_preview_dark.html">dark</a></p>
+  </div>
+</body>
+</html>

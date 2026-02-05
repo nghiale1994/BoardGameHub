@@ -1,0 +1,39 @@
+# NOTE: AI must read docs/ai/README.md before modifying this file.
+# LanguageSelection Component Configuration
+
+languageSelection:
+  supported_languages:
+    - code: vi
+      label_vi: "Tiếng Việt"
+      label_en: "Vietnamese"
+      flag: "🇻🇳"
+    - code: en
+      label_vi: "Tiếng Anh"
+      label_en: "English"
+      flag: "🇬🇧"
+  storage_key: "app.language"
+  default_language: vi
+  change_animation_ms: 300
+
+layout:
+  control_height: "clamp(2rem, 4vw, 2.5rem)"  # responsive select height
+  spacing: "clamp(0.25rem, 1%, 0.5rem)"  # responsive spacing
+  icon_size: "clamp(0.875rem, 2vw, 1.125rem)"  # optional icon size
+
+theme:
+  paletteRef: "docs/theme/theme_palette.yaml"
+  tokens:
+    primary: color-primary
+    surface: color-surface
+    text: color-text-primary
+    onPrimary: on_primary.light
+    secondary: color-secondary
+
+responsive:
+  breakpoint_mobile: 480
+  breakpoint_tablet: 768
+
+version: "1.0"
+date: "2026-01-30"
+author: "ai-agent"
+note: "LanguageSelection DSL. Reads/writes preferred language to LocalStorage and triggers i18n module. Tokens reference docs/theme/theme_palette.yaml"

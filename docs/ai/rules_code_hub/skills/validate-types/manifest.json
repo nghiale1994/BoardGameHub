@@ -1,0 +1,12 @@
+{
+  "name": "validate-types",
+  "description": "Validate TypeScript types for public interfaces",
+  "parameters": {
+    "filePath": {
+      "type": "string",
+      "description": "Path to the TypeScript file to validate"
+    }
+  },
+  "dryRun": true,
+  "output": "Type validation report"
+}

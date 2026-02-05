@@ -1,0 +1,16 @@
+{
+  "name": "scan-contradictions",
+  "description": "Scan for contradictions in related design documents",
+  "parameters": {
+    "filePath": {
+      "type": "string",
+      "description": "Path to the file being modified"
+    },
+    "relatedFiles": {
+      "type": "array",
+      "description": "List of related files to scan for contradictions"
+    }
+  },
+  "dryRun": true,
+  "output": "Report of found contradictions"
+}
