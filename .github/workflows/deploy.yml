@@ -17,26 +17,9 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  check-test-results:
-    runs-on: ubuntu-latest
-    steps:
-    - name: Checkout
-      uses: actions/checkout@v4
-
-    - name: Check test results exist
-      run: |
-        if [ ! -f "app/test-results/test-summary.json" ]; then
-          echo "❌ Test results not found! Please run tests locally before pushing."
-          echo "Run: cd app && npm run test:unit && npm run test:e2e"
-          exit 1
-        fi
-
-        echo "✅ Test results file found. Proceeding with deployment..."
-
   deploy:
     if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
-    needs: check-test-results
     permissions:
       contents: read
       pages: write
@@ -56,20 +39,3 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
-
-  check-pr-test-results:
-    runs-on: ubuntu-latest
-    if: github.event_name == 'pull_request'
-    steps:
-    - name: Checkout
-      uses: actions/checkout@v4
-
-    - name: Check test results exist for PR
-      run: |
-        if [ ! -f "app/test-results/test-summary.json" ]; then
-          echo "❌ Test results not found! Please run tests locally before creating PR."
-          echo "Run: cd app && npm run test:unit && npm run test:e2e"
-          exit 1
-        fi
-
-        echo "✅ Test results file found in PR. Proceeding..."

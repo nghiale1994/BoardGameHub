@@ -10,7 +10,7 @@ export default defineConfig({
     exclude: [...configDefaults.exclude, "e2e/**"],
     reporters: ["verbose", "json"],
     outputFile: {
-      json: "./test-results/unit-results.json"
+      json: "./test-results/unit/results.json"
     }
   }
 });

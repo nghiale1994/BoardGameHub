@@ -9,8 +9,8 @@ export default defineConfig({
   fullyParallel: true,
   reporter: [
     ["list"],
-    ["html", { outputFolder: "test-results/playwright-report" }],
-    ["json", { outputFile: "test-results/e2e-results.json" }],
+    ["html", { outputFolder: "test-results/e2e", open: "never" }],
+    ["json", { outputFile: "test-results/e2e/results.json" }],
     ...(process.env.CI ? [["github"]] : [])
   ],
   use: {
