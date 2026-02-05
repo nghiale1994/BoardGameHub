@@ -19,7 +19,7 @@ out/
 # Testing
 coverage/
 .nyc_output/
-test-results/
+# test-results/  # Commented out to allow tracking test results
 playwright-report/
 playwright/.cache/
 

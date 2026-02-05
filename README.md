@@ -19,3 +19,4 @@ Development
 - Scaffolded frontend will be created with Vite + React + TypeScript.
 - i18n source files are in `docs/config/i18n.yaml`.
 test change
+# New test change

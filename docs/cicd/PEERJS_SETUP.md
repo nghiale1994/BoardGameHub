@@ -1,3 +1,5 @@
+NOTE: AI must read docs/ai/README.md before modifying this file.
+
 # PeerJS Configuration Setup
 
 ## Overview
