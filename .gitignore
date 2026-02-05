@@ -10,8 +10,8 @@ ENV/
 *.env.*
 
 # Build outputs
-# dist/
-build/
+dist/
+!app/dist/build/
 out/
 .next/
 .nuxt/
@@ -107,6 +107,7 @@ jspm_packages/
 # Nuxt.js build / generate output
 .nuxt/
 dist/
+!app/dist/
 
 # Gatsby files
 .cache/

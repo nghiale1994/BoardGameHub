@@ -110,7 +110,6 @@ const run = async () => {
   const pwArgs = [
     playwrightCli,
     "test",
-    "--reporter=list",
     "e2e/host-migration.peerjs.spec.ts",
     "e2e/host-migration.pair.peerjs.spec.ts",
     "e2e/host-migration.matrix.peerjs.spec.ts",
