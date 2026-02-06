@@ -35,7 +35,8 @@ export const parseShareUrl = (url: string): string | null => {
  * Build a share URL for a room.
  */
 export const buildShareUrl = (roomId: string): string => {
-  return `${window.location.origin}/i/${roomId}`;
+  const baseUrl = import.meta.env.BASE_URL.replace(/\/$/, ''); // Remove trailing slash
+  return `${window.location.origin}${baseUrl}/i/${roomId}`;
 };
 
 /**
