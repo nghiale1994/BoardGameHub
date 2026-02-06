@@ -17,6 +17,10 @@ export const parseShareUrl = (url: string): string | null => {
   // Accept raw room id input.
   if (/^[a-zA-Z0-9]+$/.test(trimmed)) return trimmed;
 
+  // Accept redirected invite paths like /?/i/ROOMID (from GitHub Pages SPA redirect)
+  const redirectMatch = trimmed.match(/\?\/(?:i|r)\/([a-zA-Z0-9]+)/);
+  if (redirectMatch) return redirectMatch[1];
+
   // Accept relative invite paths like /i/ROOMID (and legacy /r/ROOMID)
   const directMatch = trimmed.match(/\/(?:i|r)\/([a-zA-Z0-9]+)/);
   if (directMatch) return directMatch[1];
@@ -24,7 +28,8 @@ export const parseShareUrl = (url: string): string | null => {
   // Accept absolute URLs.
   try {
     const urlObj = new URL(trimmed);
-    const match = urlObj.pathname.match(/\/(?:i|r)\/([a-zA-Z0-9]+)/);
+    const normalizedPath = urlObj.pathname.startsWith('/?/') ? urlObj.pathname.slice(3) : urlObj.pathname;
+    const match = normalizedPath.match(/\/(?:i|r)\/([a-zA-Z0-9]+)/);
     return match ? match[1] : null;
   } catch {
     return null;
