@@ -144,13 +144,14 @@ const saveName = async (page: import("@playwright/test").Page, name: string) => 
 
 const joinViaInvite = async (page: import("@playwright/test").Page, roomId: string, name: string) => {
   await page.goto(`${APP_ORIGIN}/i/${roomId}`);
-  await expect(page.getByPlaceholder("Paste room URL")).toHaveValue(new RegExp(`/i/${roomId}$`));
+  await expect(page.getByPlaceholder("Paste room URL")).toHaveValue(`${APP_ORIGIN}/i/${roomId}`);
 
   await saveName(page, name);
   await expect(page.getByRole("button", { name: "Join" })).toBeEnabled();
   await page.getByRole("button", { name: "Join" }).click();
 
-  await expect(page).toHaveURL(new RegExp(`/room/${roomId}$`), { timeout: 45_000 });
+  const baseUrl = page.url().split('/room/')[0];
+  await expect(page).toHaveURL(`${baseUrl}/room/${roomId}`, { timeout: 45_000 });
 
   const roomStatus = page.getByTestId("room-connection-status");
   const homeJoinUrl = page.getByPlaceholder("Paste room URL");
@@ -371,7 +372,8 @@ test.describe("host migration (PeerJS, matrix)", () => {
 
           await markBehavior(host.page, host.label, `enter room: ${roomId}`);
           await host.page.getByRole("button", { name: "Enter room" }).click();
-          await expect(host.page).toHaveURL(new RegExp(`/room/${roomId}$`));
+          const hostBaseUrl = host.page.url().split('/room/')[0];
+          await expect(host.page).toHaveURL(`${hostBaseUrl}/room/${roomId}`);
           await expect(host.page.getByTestId("room-host-badge")).toHaveText(/Host/i, { timeout: 60_000 });
           await expect(host.page.getByTestId("room-connection-status")).toHaveText(/Connected/i, { timeout: 60_000 });
           await logPeerIds(host.page, `Host:${bCase.types[0]}:${lCase.layouts[0]}`);

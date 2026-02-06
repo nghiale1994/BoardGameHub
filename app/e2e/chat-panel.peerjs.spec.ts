@@ -128,7 +128,8 @@ const createRoomAndEnter = async (page: import("@playwright/test").Page, label: 
 
   await markBehavior(page, label, `enter room: ${roomId}`);
   await page.getByRole("button", { name: "Enter room" }).click();
-  await expect(page).toHaveURL(new RegExp(`/room/${roomId}$`));
+  const baseUrl = page.url().split('/room/')[0];
+  await expect(page).toHaveURL(`${baseUrl}/room/${roomId}`);
   await waitUntilConnected(page);
 
   return roomId;
@@ -137,14 +138,15 @@ const createRoomAndEnter = async (page: import("@playwright/test").Page, label: 
 const joinViaInvite = async (page: import("@playwright/test").Page, roomId: string, label: string) => {
   await markBehavior(page, label, `goto invite /i/${roomId}`);
   await page.goto(`${APP_ORIGIN}/i/${roomId}`);
-  await expect(page.getByPlaceholder("Paste room URL")).toHaveValue(new RegExp(`/i/${roomId}$`));
+  await expect(page.getByPlaceholder("Paste room URL")).toHaveValue(`${APP_ORIGIN}/i/${roomId}`);
 
   await saveName(page, label);
 
   await markBehavior(page, label, "click Join");
   await expect(page.getByRole("button", { name: "Join" })).toBeEnabled();
   await page.getByRole("button", { name: "Join" }).click();
-  await expect(page).toHaveURL(new RegExp(`/room/${roomId}$`), { timeout: 45_000 });
+  const baseUrl = page.url().split('/room/')[0];
+  await expect(page).toHaveURL(`${baseUrl}/room/${roomId}`, { timeout: 45_000 });
   await waitUntilConnected(page);
 };
 

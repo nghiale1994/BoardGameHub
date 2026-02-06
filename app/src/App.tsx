@@ -103,7 +103,7 @@ export const App = () => {
     if (legacyInviteMatch) {
       const roomIdFromUrl = legacyInviteMatch[1];
       if (room.roomId) {
-        const confirmed = window.confirm("You're currently in a room. Do you want to leave and join a new room?");
+        const confirmed = window.confirm(t("navigation.leave_room_confirm"));
         if (!confirmed) {
           window.history.replaceState({}, "", `${basePath}/`);
           initialPathHandledRef.current = true;
@@ -264,7 +264,7 @@ export const App = () => {
     if (!ensureValidName()) return;
     try {
       const newRoomId = await room.createRoom(selectedGame.id, players);
-      window.history.pushState({}, "", `/room/${newRoomId}`);
+      window.history.pushState({}, "", `${basePath}/room/${newRoomId}`);
       const url = buildShareUrl(newRoomId);
       setShareUrl(url);
       void persistence.upsertRecentRoom({ id: newRoomId, name: selectedGame.name, players });
@@ -283,7 +283,7 @@ export const App = () => {
     setCreatedOpen(false);
     setCreateOpen(false);
     setDeferRoomView(false);
-    window.history.pushState({}, "", `/room/${roomId}`);
+    window.history.pushState({}, "", `${basePath}/room/${roomId}`);
 
     try {
       await room.joinRoom(roomId, { asSpectator });

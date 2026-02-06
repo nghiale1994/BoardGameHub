@@ -128,7 +128,8 @@ test.describe("host migration (PeerJS, multi-context)", () => {
     // Step 3) Host enters room and asserts Host badge
     await markBehavior(hostPage, "host", `enter room: ${roomId}`);
     await hostPage.getByRole("button", { name: "Enter room" }).click();
-    await expect(hostPage).toHaveURL(new RegExp(`/room/${roomId}$`));
+    const hostBaseUrl = hostPage.url().split('/room/')[0];
+    await expect(hostPage).toHaveURL(`${hostBaseUrl}/room/${roomId}`);
     await expect(hostPage.getByText(/^Room: Catan$/)).toBeVisible({ timeout: 15_000 });
     await expect(hostPage.getByTestId("room-host-badge")).toHaveText(/Host/i);
 
@@ -138,13 +139,14 @@ test.describe("host migration (PeerJS, multi-context)", () => {
       await page.goto(`/i/${roomId}`);
 
       // Ensure invite URL is hydrated into the JoinRoom form.
-      await expect(page.getByPlaceholder("Paste room URL")).toHaveValue(new RegExp(`/i/${roomId}$`));
+      await expect(page.getByPlaceholder("Paste room URL")).toHaveValue(`${APP_ORIGIN}/i/${roomId}`);
 
       await saveName(page, name);
 
       await expect(page.getByRole("button", { name: "Join" })).toBeEnabled();
       await page.getByRole("button", { name: "Join" }).click();
-      await expect(page).toHaveURL(new RegExp(`/room/${roomId}$`), { timeout: 15_000 });
+      const peerBaseUrl = page.url().split('/room/')[0];
+      await expect(page).toHaveURL(`${peerBaseUrl}/room/${roomId}`, { timeout: 15_000 });
       await expect(page.getByText(/^Room: Catan$/)).toBeVisible({ timeout: 15_000 });
       return { page, logs };
     };

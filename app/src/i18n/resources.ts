@@ -127,6 +127,9 @@ export const resources = {
         invalid_url: "Liên kết phòng không hợp lệ",
         game_not_found: "Game không tìm thấy"
       },
+      navigation: {
+        leave_room_confirm: "Bạn đang ở trong một phòng. Bạn có muốn rời phòng và tham gia phòng mới không?"
+      },
       gameroom: {
         title: "Phòng chơi: {{gameName}}",
         room_id: "Room: {{roomId}}",
@@ -308,6 +311,9 @@ export const resources = {
         connection_failed: "Connection failed",
         invalid_url: "Invalid room URL",
         game_not_found: "Game not found"
+      },
+      navigation: {
+        leave_room_confirm: "You're currently in a room. Do you want to leave and join a new room?"
       },
       gameroom: {
         title: "Room: {{gameName}}",

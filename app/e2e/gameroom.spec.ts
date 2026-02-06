@@ -60,7 +60,8 @@ const joinFromHome = async (
   await page.getByRole("button", { name: "Join" }).click();
 
   await markBehavior(page, label, "assert URL + Room header");
-  await expect(page).toHaveURL(new RegExp(`/room/${opts.roomId}$`));
+  const baseUrl = page.url().split('/room/')[0];
+  await expect(page).toHaveURL(`${baseUrl}/room/${opts.roomId}`);
   await expect(page.getByText(/^Room: Catan$/)).toBeVisible();
 };
 

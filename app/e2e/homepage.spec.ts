@@ -1,5 +1,12 @@
 import { expect, test } from "@playwright/test";
 
+const nodeEnv =
+  ((globalThis as unknown as { process?: { env?: Record<string, string | undefined> } }).process?.env as
+    | Record<string, string | undefined>
+    | undefined) ?? {};
+
+const APP_ORIGIN = nodeEnv.E2E_APP_ORIGIN ?? "http://127.0.0.1:5173";
+
 test.beforeEach(async ({ page }) => {
   await page.addInitScript(() => {
     localStorage.clear();
@@ -398,7 +405,8 @@ test("end-to-end invite flow with direct URL", async ({ browser }) => {
 
   // Check host room URL
   await markBehavior(hostPage, hostLabel, "assert host room URL");
-  await expect(hostPage).toHaveURL(new RegExp(`/room/${roomId}$`));
+  const hostBaseUrl = hostPage.url().split('/room/')[0];
+  await expect(hostPage).toHaveURL(`${hostBaseUrl}/room/${roomId}`);
 
   // Step 2) Player: goto shareUrl
   await markBehavior(playerPage, playerLabel, `goto ${shareUrl}`);
@@ -407,7 +415,7 @@ test("end-to-end invite flow with direct URL", async ({ browser }) => {
   // Check input prefilled + focused
   const input = playerPage.getByPlaceholder("Paste room URL");
   await markBehavior(playerPage, playerLabel, "assert input prefilled + focused");
-  await expect(input).toHaveValue(new RegExp(`${shareUrl}$`));
+  await expect(input).toHaveValue(shareUrl);
   await expect(input).toBeFocused();
 
   // Player: saveName Bob, join
@@ -417,7 +425,8 @@ test("end-to-end invite flow with direct URL", async ({ browser }) => {
 
   // Check player room URL
   await markBehavior(playerPage, playerLabel, "assert player room URL");
-  await expect(playerPage).toHaveURL(new RegExp(`/room/${roomId}$`));
+  const playerBaseUrl = playerPage.url().split('/room/')[0];
+  await expect(playerPage).toHaveURL(`${playerBaseUrl}/room/${roomId}`);
 
   await hostPage.close();
   await playerPage.close();
@@ -464,7 +473,8 @@ test("end-to-end invite flow with redirected URL", async ({ browser }) => {
 
   // Check host room URL
   await markBehavior(hostPage, hostLabel, "assert host room URL");
-  await expect(hostPage).toHaveURL(new RegExp(`/room/${roomId}$`));
+  const hostBaseUrl = hostPage.url().split('/room/')[0];
+  await expect(hostPage).toHaveURL(`${hostBaseUrl}/room/${roomId}`);
 
   // Step 2) Player: goto /?/i/<roomId>
   const redirectedUrl = `/?/i/${roomId}`;
@@ -474,12 +484,12 @@ test("end-to-end invite flow with redirected URL", async ({ browser }) => {
 
   // Check URL normalizes
   await markBehavior(playerPage, playerLabel, "assert URL normalized");
-  await expect(playerPage).toHaveURL(new RegExp(`/i/${roomId}$`));
+  await expect(playerPage).toHaveURL(`${APP_ORIGIN}/i/${roomId}`);
 
   // Check input prefilled + focused
   const input = playerPage.getByPlaceholder("Paste room URL");
   await markBehavior(playerPage, playerLabel, "assert input prefilled + focused");
-  await expect(input).toHaveValue(new RegExp(`/i/${roomId}$`));
+  await expect(input).toHaveValue(`${APP_ORIGIN}/i/${roomId}`);
   await expect(input).toBeFocused();
 
   // Player: saveName Bob, join
@@ -489,8 +499,48 @@ test("end-to-end invite flow with redirected URL", async ({ browser }) => {
 
   // Check player room URL
   await markBehavior(playerPage, playerLabel, "assert player room URL");
-  await expect(playerPage).toHaveURL(new RegExp(`/room/${roomId}$`));
+  const playerBaseUrl = playerPage.url().split('/room/')[0];
+  await expect(playerPage).toHaveURL(`${playerBaseUrl}/room/${roomId}`);
 
   await hostPage.close();
   await playerPage.close();
+});
+
+
+// Test: i18n leave room confirmation dialog
+// Steps:
+// 1) Set language to Vietnamese
+// 2) Create a room
+// 3) Try to create another room
+// 4) Assert confirm dialog shows Vietnamese text
+test("i18n leave room confirmation dialog", async ({ page }) => {
+  const label = "i18n-confirm";
+
+  // Step 1) Set language to Vietnamese and goto /
+  await page.addInitScript(() => {
+    localStorage.clear();
+    localStorage.setItem("boardgamehub.language", "vi");
+  });
+  await markBehavior(page, label, "goto /");
+  await page.goto("/");
+  await page.waitForLoadState('networkidle');
+
+  // Step 2) Save name and create room
+  await saveName(page, label, "Alice");
+  await markBehavior(page, label, "choose game Catan");
+  await page.getByRole("button", { name: "Catan" }).click();
+  await markBehavior(page, label, "click Create Room");
+  await page.getByRole("button", { name: "Create Room" }).click();
+
+  // Step 3) Try to create another room (should trigger confirm dialog)
+  await markBehavior(page, label, "click Create Room again");
+  await page.getByRole("button", { name: "Create Room" }).click();
+
+  // Step 4) Assert confirm dialog shows Vietnamese text
+  await markBehavior(page, label, "assert confirm dialog text");
+  const dialog = await page.waitForEvent('dialog');
+  expect(dialog.message()).toBe("Bạn đang ở trong một phòng. Bạn có muốn rời phòng và tham gia phòng mới không?");
+  await dialog.accept();
+
+  await page.close();
 });
