@@ -11,6 +11,7 @@ ENV/
 
 # Build outputs
 dist/
+app/dist/
 out/
 .next/
 .nuxt/
