@@ -48,7 +48,7 @@ export const App = () => {
   const isInviteRoute =
     typeof window !== "undefined" && (() => {
       const pathname = window.location.pathname;
-      const actualPath = pathname.startsWith('/?/') ? pathname.slice(3) : pathname;
+      const actualPath = pathname.replace('/?/', '/');
       return actualPath.match(/^\/(?:i|r)\/[a-zA-Z0-9]+$/) !== null;
     })();
 
@@ -90,7 +90,7 @@ export const App = () => {
     if (initialPathHandledRef.current) return;
 
     const pathname = window.location.pathname;
-    const actualPath = pathname.startsWith('/?/') ? pathname.slice(3) : pathname;
+    const actualPath = pathname.replace('/?/', '/');
 
     const legacyInviteMatch = actualPath.match(/^\/r\/([a-zA-Z0-9]+)$/);
     if (legacyInviteMatch) {

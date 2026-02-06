@@ -52,6 +52,42 @@ test("parseShareUrl supports legacy /r invite links", () => {
   expect(roomId).toBe("LEGACY123");
 });
 
+// Tests: parseShareUrl extracts roomId from redirected /?/i/:roomId paths.
+// Steps:
+// 1) Build a redirected /?/i/:roomId invite URL.
+// 2) Call parseShareUrl(url).
+// 3) Assert returned roomId matches.
+test("parseShareUrl extracts room ID from redirected /?/i paths", () => {
+  console.log("[test] roomHelpers parseShareUrl extracts room ID from redirected /?/i");
+
+  // Step 1) Build a redirected /?/i/:roomId invite URL.
+  const url = "/?/i/REDIRECT123";
+
+  // Step 2) Call parseShareUrl(url).
+  const roomId = parseShareUrl(url);
+
+  // Step 3) Assert returned roomId matches.
+  expect(roomId).toBe("REDIRECT123");
+});
+
+// Tests: parseShareUrl extracts roomId from redirected absolute URLs.
+// Steps:
+// 1) Build a redirected absolute URL with /?/i/:roomId.
+// 2) Call parseShareUrl(url).
+// 3) Assert returned roomId matches.
+test("parseShareUrl extracts room ID from redirected absolute URLs", () => {
+  console.log("[test] roomHelpers parseShareUrl extracts room ID from redirected absolute URLs");
+
+  // Step 1) Build a redirected absolute URL with /?/i/:roomId.
+  const url = "https://nghiale1994.github.io/BoardGameHub/?/i/ABSOLUTE123";
+
+  // Step 2) Call parseShareUrl(url).
+  const roomId = parseShareUrl(url);
+
+  // Step 3) Assert returned roomId matches.
+  expect(roomId).toBe("ABSOLUTE123");
+});
+
 // Tests: parseShareUrl returns null for an invalid URL string.
 // Steps:
 // 1) Call parseShareUrl with a non-URL string.
