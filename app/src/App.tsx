@@ -25,7 +25,7 @@ type RoomJoinPrefs = Record<string, { asSpectator: boolean; updatedAt: number }>
 const basePath = (import.meta.env.BASE_URL || '/').replace(/\/$/, '');
 
 export const App = () => {
-  const { i18n } = useTranslation();
+  const { i18n, t } = useTranslation();
   const room = useRoomContext();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const isDesktop = useMediaQuery("(min-width: 769px)");
@@ -132,7 +132,7 @@ export const App = () => {
     if (inviteMatch) {
       const roomIdFromUrl = inviteMatch[1];
       if (room.roomId) {
-        const confirmed = window.confirm("You're currently in a room. Do you want to leave and join a new room?");
+        const confirmed = window.confirm(t('navigation.leave_room_confirm'));
         if (!confirmed) {
           window.history.replaceState({}, "", `${basePath}/`);
           initialPathHandledRef.current = true;
