@@ -11,7 +11,6 @@ ENV/
 
 # Build outputs
 dist/
-!app/dist/build/
 out/
 .next/
 .nuxt/
@@ -107,10 +106,10 @@ jspm_packages/
 # Nuxt.js build / generate output
 .nuxt/
 dist/
-!app/dist/
 
 # Gatsby files
 .cache/
+!app/public/
 public
 
 # Storybook build outputs
