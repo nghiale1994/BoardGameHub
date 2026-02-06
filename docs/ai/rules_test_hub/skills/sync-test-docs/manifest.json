@@ -1,0 +1,46 @@
+{
+  "name": "sync-test-docs",
+  "description": "Scan test files and verify/update corresponding design docs' Testing tables to prevent coverage drift",
+  "version": "1.0.0",
+  "capabilities": [
+    "scan-test-files",
+    "parse-test-intent",
+    "update-design-docs",
+    "verify-sync-status"
+  ],
+  "triggers": [
+    "test-file-changed",
+    "manual-invocation"
+  ],
+  "parameters": {
+    "testFiles": {
+      "type": "array",
+      "description": "List of test files to scan (optional, scans all if empty)"
+    },
+    "dryRun": {
+      "type": "boolean",
+      "description": "If true, only report what would be changed without applying",
+      "default": true
+    },
+    "autoFix": {
+      "type": "boolean",
+      "description": "If true, automatically update docs when drift detected",
+      "default": false
+    }
+  },
+  "output": {
+    "syncReport": {
+      "type": "object",
+      "description": "Report of sync status with drift details and proposed fixes"
+    },
+    "updatedDocs": {
+      "type": "array",
+      "description": "List of docs that were updated"
+    }
+  },
+  "safety": {
+    "requiresApproval": true,
+    "backupBeforeChanges": true,
+    "reversible": true
+  }
+}

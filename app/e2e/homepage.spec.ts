@@ -356,3 +356,141 @@ for (const { name, viewport } of breakpointViewports) {
     });
   });
 }
+
+// Tests: end-to-end invite flow with direct URL.
+// Steps:
+// 1) Host: goto /, saveName Alice, create room, get shareUrl, enter room, check room URL
+// 2) Player: goto shareUrl, check input prefilled + focused, saveName Bob, join, check room URL
+test("end-to-end invite flow with direct URL", async ({ browser }) => {
+  const hostPage = await browser.newPage();
+  await hostPage.addInitScript(() => {
+    localStorage.clear();
+    localStorage.setItem("boardgamehub.language", "en");
+  });
+  const playerPage = await browser.newPage();
+  await playerPage.addInitScript(() => {
+    localStorage.clear();
+    localStorage.setItem("boardgamehub.language", "en");
+  });
+
+  const hostLabel = "host";
+  const playerLabel = "player";
+
+  // Step 1) Host: goto /, saveName Alice, create room
+  await markBehavior(hostPage, hostLabel, "goto /");
+  await hostPage.goto("/");
+  await saveName(hostPage, hostLabel, "Alice");
+  await markBehavior(hostPage, hostLabel, "choose game Catan");
+  await hostPage.getByText("Catan").click();
+  await markBehavior(hostPage, hostLabel, "click Create Room");
+  await hostPage.getByRole("button", { name: "Create Room" }).click();
+
+  // Get shareUrl and roomId
+  const shareUrlElement = hostPage.getByRole("dialog", { name: "Room created" }).getByRole("textbox");
+  const shareUrl = await shareUrlElement.inputValue();
+  const roomIdMatch = shareUrl.match(/\/i\/([A-Z0-9]+)$/);
+  expect(roomIdMatch).toBeTruthy();
+  const roomId = roomIdMatch![1];
+
+  // Host: enter room
+  await markBehavior(hostPage, hostLabel, "click Enter room");
+  await hostPage.getByRole("button", { name: "Enter room" }).click();
+
+  // Check host room URL
+  await markBehavior(hostPage, hostLabel, "assert host room URL");
+  await expect(hostPage).toHaveURL(new RegExp(`/room/${roomId}$`));
+
+  // Step 2) Player: goto shareUrl
+  await markBehavior(playerPage, playerLabel, `goto ${shareUrl}`);
+  await playerPage.goto(shareUrl);
+
+  // Check input prefilled + focused
+  const input = playerPage.getByPlaceholder("Paste room URL");
+  await markBehavior(playerPage, playerLabel, "assert input prefilled + focused");
+  await expect(input).toHaveValue(new RegExp(`${shareUrl}$`));
+  await expect(input).toBeFocused();
+
+  // Player: saveName Bob, join
+  await saveName(playerPage, playerLabel, "Bob");
+  await markBehavior(playerPage, playerLabel, "click Join");
+  await playerPage.getByRole("button", { name: "Join" }).click();
+
+  // Check player room URL
+  await markBehavior(playerPage, playerLabel, "assert player room URL");
+  await expect(playerPage).toHaveURL(new RegExp(`/room/${roomId}$`));
+
+  await hostPage.close();
+  await playerPage.close();
+});
+
+// Tests: end-to-end invite flow with redirected URL.
+// Steps:
+// 1) Host: goto /, saveName Alice, create room, get roomId, enter room, check room URL
+// 2) Player: goto /?/i/<roomId>, check URL normalizes, input prefilled + focused, saveName Bob, join, check room URL
+test("end-to-end invite flow with redirected URL", async ({ browser }) => {
+  const hostPage = await browser.newPage();
+  await hostPage.addInitScript(() => {
+    localStorage.clear();
+    localStorage.setItem("boardgamehub.language", "en");
+  });
+  const playerPage = await browser.newPage();
+  await playerPage.addInitScript(() => {
+    localStorage.clear();
+    localStorage.setItem("boardgamehub.language", "en");
+  });
+
+  const hostLabel = "host";
+  const playerLabel = "player";
+
+  // Step 1) Host: goto /, saveName Alice, create room
+  await markBehavior(hostPage, hostLabel, "goto /");
+  await hostPage.goto("/");
+  await saveName(hostPage, hostLabel, "Alice");
+  await markBehavior(hostPage, hostLabel, "choose game Catan");
+  await hostPage.getByText("Catan").click();
+  await markBehavior(hostPage, hostLabel, "click Create Room");
+  await hostPage.getByRole("button", { name: "Create Room" }).click();
+
+  // Get roomId
+  const shareUrlElement = hostPage.getByRole("dialog", { name: "Room created" }).getByRole("textbox");
+  const shareUrl = await shareUrlElement.inputValue();
+  const roomIdMatch = shareUrl.match(/\/i\/([A-Z0-9]+)$/);
+  expect(roomIdMatch).toBeTruthy();
+  const roomId = roomIdMatch![1];
+
+  // Host: enter room
+  await markBehavior(hostPage, hostLabel, "click Enter room");
+  await hostPage.getByRole("button", { name: "Enter room" }).click();
+
+  // Check host room URL
+  await markBehavior(hostPage, hostLabel, "assert host room URL");
+  await expect(hostPage).toHaveURL(new RegExp(`/room/${roomId}$`));
+
+  // Step 2) Player: goto /?/i/<roomId>
+  const redirectedUrl = `/?/i/${roomId}`;
+  await markBehavior(playerPage, playerLabel, `goto ${redirectedUrl}`);
+  await playerPage.goto(redirectedUrl);
+  await playerPage.waitForLoadState('networkidle');
+
+  // Check URL normalizes
+  await markBehavior(playerPage, playerLabel, "assert URL normalized");
+  await expect(playerPage).toHaveURL(new RegExp(`/i/${roomId}$`));
+
+  // Check input prefilled + focused
+  const input = playerPage.getByPlaceholder("Paste room URL");
+  await markBehavior(playerPage, playerLabel, "assert input prefilled + focused");
+  await expect(input).toHaveValue(new RegExp(`/i/${roomId}$`));
+  await expect(input).toBeFocused();
+
+  // Player: saveName Bob, join
+  await saveName(playerPage, playerLabel, "Bob");
+  await markBehavior(playerPage, playerLabel, "click Join");
+  await playerPage.getByRole("button", { name: "Join" }).click();
+
+  // Check player room URL
+  await markBehavior(playerPage, playerLabel, "assert player room URL");
+  await expect(playerPage).toHaveURL(new RegExp(`/room/${roomId}$`));
+
+  await hostPage.close();
+  await playerPage.close();
+});

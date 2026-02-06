@@ -5,8 +5,7 @@
 Version: 2026-02-04
 
 Changelog:
-
-- 2026-01-30: Added RoomCreated modal design for share URL, enter room, and later actions.
+- 2026-02-06: Added comprehensive E2E test cases for end-to-end invite flows covering host room creation, player joining, and URL validations.- 2026-01-30: Added RoomCreated modal design for share URL, enter room, and later actions.
 - 2026-02-02: Clarified that Later closes modal and leaves the room (returns to HomePage).
 - 2026-02-02: Updated Later behavior: close modal and return to HomePage while keeping the hosted room running in background.
 - 2026-02-03: Standardized Testing section into Unit/Integration/E2E tables.
@@ -103,4 +102,6 @@ DSL config
 
 | Component | Purpose / Context | Test Steps | Expected Result |
 |----------|-------------------|------------|----------------|
-| Copy + navigation | Real clipboard and route transitions | E2E (Playwright) — proposed; not yet implemented in repo | Copy works; Enter navigates; Later returns to HomePage |
+| Copy + navigation | Real clipboard and route transitions | E2E (Playwright): Create room → copy URL from modal → paste elsewhere → assert copied correctly (Coverage: `app/e2e/homepage.spec.ts`) | Copy works; Enter navigates; Later returns to HomePage |
+| End-to-end invite flow (direct URL) | Host creates room, player joins via direct invite URL | E2E (Playwright): Host creates room → copies invite URL → Player opens direct invite URL (/i/ROOMID) → joins room → assert both in same room (Coverage: `app/e2e/homepage.spec.ts`) | Host and player successfully connect via direct invite URL |
+| End-to-end invite flow (redirected URL) | Host creates room, player joins via redirected invite URL | E2E (Playwright): Host creates room → copies invite URL → Player opens redirected invite URL (/?/i/ROOMID) → URL normalizes → joins room → assert both in same room (Coverage: `app/e2e/homepage.spec.ts`) | Host and player successfully connect via redirected invite URL |

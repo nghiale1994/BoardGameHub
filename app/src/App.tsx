@@ -22,6 +22,8 @@ const THEME_STORAGE_KEY = "boardgamehub.theme";
 
 type RoomJoinPrefs = Record<string, { asSpectator: boolean; updatedAt: number }>;
 
+const basePath = (import.meta.env.BASE_URL || '/').replace(/\/$/, '');
+
 export const App = () => {
   const { i18n } = useTranslation();
   const room = useRoomContext();
@@ -103,14 +105,14 @@ export const App = () => {
       if (room.roomId) {
         const confirmed = window.confirm("You're currently in a room. Do you want to leave and join a new room?");
         if (!confirmed) {
-          window.history.replaceState({}, "", "/");
+          window.history.replaceState({}, "", `${basePath}/`);
           initialPathHandledRef.current = true;
           return;
         }
         room.leaveRoom();
         setDeferRoomView(false);
       }
-      window.history.replaceState({}, "", `/i/${roomIdFromUrl}`);
+      window.history.replaceState({}, "", `${basePath}/i/${roomIdFromUrl}`);
       setJoinInitialUrl(buildShareUrl(roomIdFromUrl));
       setJoinAutoFocus(true);
       // Delay scroll to ensure component is mounted
@@ -132,14 +134,14 @@ export const App = () => {
       if (room.roomId) {
         const confirmed = window.confirm("You're currently in a room. Do you want to leave and join a new room?");
         if (!confirmed) {
-          window.history.replaceState({}, "", "/");
+          window.history.replaceState({}, "", `${basePath}/`);
           initialPathHandledRef.current = true;
           return;
         }
         room.leaveRoom();
         setDeferRoomView(false);
       }
-      window.history.replaceState({}, "", `/i/${roomIdFromUrl}`);
+      window.history.replaceState({}, "", `${basePath}/i/${roomIdFromUrl}`);
       setJoinInitialUrl(buildShareUrl(roomIdFromUrl));
       setJoinAutoFocus(true);
       // Delay scroll to ensure component is mounted
@@ -186,7 +188,7 @@ export const App = () => {
       if (pref && typeof pref.asSpectator === "boolean") {
         setPendingAutoJoin({ roomId: roomIdFromUrl, asSpectator: pref.asSpectator });
       } else {
-        window.history.replaceState({}, "", "/");
+        window.history.replaceState({}, "", `${basePath}/`);
       }
       initialPathHandledRef.current = true;
       return;
@@ -205,7 +207,7 @@ export const App = () => {
 
     // Enforce the same name gate as manual join.
     if (!ensureValidName()) {
-      window.history.replaceState({}, "", "/");
+      window.history.replaceState({}, "", `${basePath}/`);
       setPendingAutoJoin(null);
       return;
     }
@@ -219,7 +221,7 @@ export const App = () => {
     // clearing forces a redirect-to-Home on join failure and prevents takeover/reconnect from running.
 
     // Mirror handleJoinRoom behavior but avoid referencing it before declaration.
-    window.history.replaceState({}, "", `/room/${roomIdToJoin}`);
+    window.history.replaceState({}, "", `${basePath}/room/${roomIdToJoin}`);
     void (async () => {
       try {
         await room.joinRoom(roomIdToJoin, { asSpectator });
@@ -292,7 +294,7 @@ export const App = () => {
       room.leaveRoom();
       setJoinInitialUrl(undefined);
       setJoinAutoFocus(false);
-      window.history.pushState({}, "", "/");
+      window.history.pushState({}, "", `${basePath}/`);
     }
   };
 
@@ -301,7 +303,7 @@ export const App = () => {
     setJoinInitialUrl(undefined);
     setJoinAutoFocus(false);
     setDeferRoomView(false);
-    window.history.pushState({}, "", "/");
+    window.history.pushState({}, "", `${basePath}/`);
   };
 
   if (!isInviteRoute && room.roomId && !room.metadata && !createdOpen && !deferRoomView) {
@@ -448,7 +450,7 @@ export const App = () => {
                   variant="outlined"
                   onClick={() => {
                     setDeferRoomView(false);
-                    window.history.pushState({}, "", `/room/${room.roomId}`);
+                    window.history.pushState({}, "", `${basePath}/room/${room.roomId}`);
                   }}
                   sx={{ textTransform: "none" }}
                 >

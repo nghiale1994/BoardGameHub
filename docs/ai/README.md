@@ -1,6 +1,6 @@
 NOTE: AI must read docs/ai/README.md before modifying this file.
 
-Version: 2026-02-05
+Version: 2026-02-06
 
 Changelog:
 - 2026-02-01: Introduced modular AI rules (core/docs/code-hub/code-game).
@@ -10,6 +10,7 @@ Changelog:
 - 2026-02-05: Finalized migration and removed legacy files `docs/ai/rules_test_hub.md` and `docs/ai/rules_core.md`. Please reference module `README.md` files going forward.
 - 2026-02-05: Added Available Skills Registry for quick reference of all automation skills.
 - 2026-02-05: Updated Skills Registry with missing skills from rules_core and rules_test_hub; added requirement to update registry when modifying skills.
+- 2026-02-06: Added `sync-test-docs` skill to rules_test_hub for preventing docs-test drift.
 # AI Rules Modules (Entry Guide)
 
 ## Purpose
@@ -111,3 +112,4 @@ This registry lists all available automation skills across rule modules for quic
 - **enforce-test-comments**: Validate and standardize test header comments to the repo policy (Tests: + Steps: numbered lines) and optionally insert inline `// Step N)` markers.
 - **run-unit-tests**: Run the repository's unit test suite (Vitest) for targeted files or the whole suite and report results.
 - **sweep-tests**: Sweep repository for test files and normalize test headers according to `enforce-test-comments` plus produce a report of remaining non-conforming files.
+- **sync-test-docs**: Scan test files and verify/update corresponding design docs' Testing tables to prevent coverage drift (proposed skill).

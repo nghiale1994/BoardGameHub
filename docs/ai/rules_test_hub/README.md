@@ -1,10 +1,12 @@
 NOTE: AI must read docs/ai/README.md before modifying this file.
 
-Version: 2026-02-05
+Version: 2026-02-06
 
 Changelog:
 - 2026-02-05: Moved `rules_test_hub.md` into module folder and added Skills listing with manifests in `docs/ai/rules_test_hub/skills`.
 - 2026-02-05: Completed migration: legacy `docs/ai/rules_test_hub.md` removed; this `README.md` is now canonical. Please update any references to the module to `docs/ai/rules_test_hub/README.md`.
+- 2026-02-06: Added explicit Change control rules for test additions/removals with hard violation enforcement.
+- 2026-02-06: Added proposed `sync-test-docs` automation skill to prevent docs-test drift.
 
 # Hub Testing Docs Rules (AI)
 
@@ -159,6 +161,15 @@ When you add/remove behaviors or requirements in a design doc:
 2. Update the folder `tests.md` index.
 3. Update `Version:` and append a dated bullet to `Changelog:`.
 
+**When you add/remove/modify tests in code:**
+
+1. Immediately update the corresponding design doc's `## Testing` tables to reflect new coverage.
+2. Update the folder `tests.md` index if applicable.
+3. Update `Version:` and append a dated bullet to `Changelog:` in the affected docs.
+4. Run `sync-test-docs` skill (proposed) to auto-verify sync status.
+
+**Failure to sync docs with test changes is a hard violation** — do not proceed with other tasks until docs are updated.
+
 ## Automation Skills
 
 The repository provides automation skills that implement or help enforce these rules. Skills are colocated with the rule modules in `docs/ai/<rule>/skills`.
@@ -168,7 +179,9 @@ Current skills for this module:
 - `docs/ai/rules_test_hub/skills/enforce-test-comments/manifest.json` — enforce per-test `Tests:`/`Steps:` headers and insert inline `// Step N)` markers.
 - `docs/ai/rules_test_hub/skills/sweep-tests/manifest.json` — scan the repo for non-conforming tests and optionally auto-fix.
 - `docs/ai/rules_test_hub/skills/run-unit-tests/manifest.json` — run Vitest unit tests (targeted files or full suite) and report results.
+- `docs/ai/rules_test_hub/skills/sync-test-docs/manifest.json` — scan test files and verify/update corresponding design docs' Testing tables (proposed skill).
 
 Usage guidance:
 - Run `sweep-tests` in `dry-run` to get a report before applying fixes.
 - After applying fixes, always run `run-unit-tests` on the modified files and follow the failure triage rules.
+- Use `sync-test-docs` after adding/removing tests to auto-verify docs are in sync.

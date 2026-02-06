@@ -1,6 +1,7 @@
 NOTE: AI must read docs/ai/README.md before modifying this file.
 Version: 2026-02-06
 Changelog:
+- 2026-02-06: Added comprehensive E2E test cases for end-to-end invite flows (direct and redirected URLs) covering host creation, player joining, and URL validations.
 - 2026-02-06: Added E2E test case for GitHub Pages SPA redirect link handling in JoinRoom component.
 - 2026-01-31: Added spectator mode checkbox, invite URL auto-paste behavior.
 - 2026-02-02: Joining requires a valid saved display name (no empty / no quotes-only like "\"\"").
@@ -117,6 +118,8 @@ sequenceDiagram
 |----------|-------------------|------------|----------------|
 | Join from invite | Real browser scroll + focus behavior | E2E (Playwright): goto /i/ROOMID → assert scroll to JoinRoom → assert URL prefilled + focused (Coverage: `app/e2e/homepage.spec.ts`) | Invite link opens, scrolls to JoinRoom, pre-fills URL, focuses input |
 | Join from redirected invite | GitHub Pages SPA redirect handling | E2E (Playwright): goto / ? /i/ROOMID → assert URL normalizes to /i/ROOMID → assert JoinRoom prefill + focus → click Join → assert room joined (Coverage: `app/e2e/homepage.spec.ts`) | Redirected invite URLs work end-to-end, joining room successfully |
+| End-to-end invite flow (direct URL) | Host creates room, player joins via direct invite URL | E2E (Playwright): Host creates room → copies invite URL → Player opens direct invite URL (/i/ROOMID) → joins room → assert both in same room (Coverage: `app/e2e/homepage.spec.ts`) | Host and player successfully connect via direct invite URL |
+| End-to-end invite flow (redirected URL) | Host creates room, player joins via redirected invite URL | E2E (Playwright): Host creates room → copies invite URL → Player opens redirected invite URL (/?/i/ROOMID) → URL normalizes → joins room → assert both in same room (Coverage: `app/e2e/homepage.spec.ts`) | Host and player successfully connect via redirected invite URL |
 
 Notes
 - Use MUI `TextField` and `Button`.

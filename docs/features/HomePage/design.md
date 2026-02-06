@@ -1,6 +1,7 @@
 NOTE: AI must read docs/ai/README.md before modifying this file.
 Version: 2026-02-06
 Changelog:
+- 2026-02-06: Added E2E test cases for end-to-end invite flows (direct and redirected URLs) covering multi-user scenarios (host creates room, player joins via invite).
 - 2026-02-06: Added E2E test case for GitHub Pages SPA redirect link flow (/ ? /i/:roomId → /i/:roomId → auto-scroll + prefill + join room).
 - 2026-01-31: Added RecentGames section to homepage (displayed inline, not in sidebar).
 - 2026-01-31: Removed standalone "Tạo phòng mới" action card (game cards trigger CreateRoomModal on click); simplified sidebar to essentials (logo, language, theme); removed RecentGames from sidebar.
@@ -202,6 +203,8 @@ flowchart TD
 |----------|-------------------|------------|----------------|
 | HomePage end-to-end (core flows) | Smoke coverage: render, invite prefill, name gate, join/create flows | Run `npm run test:e2e`; follow test flow: load HomePage → enter/save name → use invite route prefill → join/create (Coverage: `app/e2e/homepage.spec.ts`) | Core flows pass at default viewport |
 | HomePage end-to-end (GitHub Pages redirect) | SPA redirect handling: redirected invite URLs (/ ? /i/:roomId) properly route to invite flow | Run `npm run test:e2e`; navigate to redirected URL (/ ? /i/ROOMID) → verify URL normalizes to /i/ROOMID → verify JoinRoom prefill + focus → join room successfully (Coverage: `app/e2e/homepage.spec.ts`) | Redirected invite URLs work end-to-end, joining room successfully |
+| HomePage end-to-end (invite flow direct) | Multi-user invite flow: host creates room → player joins via direct invite URL (/i/:roomId) | Host: goto / → save name → create room → enter room → check URLs; Player: goto invite URL → check prefill + focus → save name → join → check room URL (Coverage: `app/e2e/homepage.spec.ts`) | Host and player both reach correct room URLs; invite URL pre-fills and focuses correctly |
+| HomePage end-to-end (invite flow redirected) | Multi-user invite flow: host creates room → player joins via redirected invite URL (/?/i/:roomId) | Host: goto / → save name → create room → enter room → check URLs; Player: goto redirected URL → check URL normalizes → check prefill + focus → save name → join → check room URL (Coverage: `app/e2e/homepage.spec.ts`) | Host and player both reach correct room URLs; redirected URL normalizes and pre-fills correctly |
 | HomePage end-to-end (breakpoints) | Responsive layout + full flow Join/Create across breakpoints | Run `npm run test:e2e`; execute the same core flow at desktop/tablet/mobile viewports (Coverage: `app/e2e/homepage.spec.ts`) | Core flows pass across desktop/tablet/mobile viewports |
 
 ### Notes

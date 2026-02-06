@@ -1,7 +1,6 @@
 NOTE: AI must read docs/ai/README.md before modifying this file.
 Version: 2026-02-04
-Changelog:
-- 2026-01-31: Removed obsolete "CreateRoom card/button" trigger; modal is opened via GameListGrid game card click.
+Changelog:- 2026-02-06: Added comprehensive E2E test cases for end-to-end invite flows covering host room creation, player joining, and URL validations.- 2026-01-31: Removed obsolete "CreateRoom card/button" trigger; modal is opened via GameListGrid game card click.
 - 2026-01-31: Removed extra game metadata field from CreateRoomModal.
 - 2026-01-30: Added CreateRoomModal design with full game info and settings (dropdown supported).
 - 2026-01-30: Added settings sections layout and dropdown list guidance.
@@ -112,4 +111,6 @@ DSL config
 
 | Component | Purpose / Context | Test Steps | Expected Result |
 |----------|-------------------|------------|----------------|
-| Create room flow | Real responsive behavior and create-to-confirmation | E2E (Playwright) — proposed; not yet implemented in repo | Modal responsive; create results in share URL confirmation |
+| Create room flow | Real responsive behavior and create-to-confirmation | E2E (Playwright): Open modal → select game → adjust settings → create room → assert share URL shown (Coverage: `app/e2e/homepage.spec.ts`) | Modal responsive; create results in share URL confirmation |
+| End-to-end invite flow (direct URL) | Host creates room, player joins via direct invite URL | E2E (Playwright): Host creates room → copies invite URL → Player opens direct invite URL (/i/ROOMID) → joins room → assert both in same room (Coverage: `app/e2e/homepage.spec.ts`) | Host and player successfully connect via direct invite URL |
+| End-to-end invite flow (redirected URL) | Host creates room, player joins via redirected invite URL | E2E (Playwright): Host creates room → copies invite URL → Player opens redirected invite URL (/?/i/ROOMID) → URL normalizes → joins room → assert both in same room (Coverage: `app/e2e/homepage.spec.ts`) | Host and player successfully connect via redirected invite URL |
