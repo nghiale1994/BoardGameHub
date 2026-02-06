@@ -46,7 +46,11 @@ export const App = () => {
   const autoJoinInFlightRef = useRef(false);
 
   const isInviteRoute =
-    typeof window !== "undefined" && window.location.pathname.match(/^\/(?:i|r)\/[a-zA-Z0-9]+$/) !== null;
+    typeof window !== "undefined" && (() => {
+      const pathname = window.location.pathname;
+      const actualPath = pathname.startsWith('/?/') ? pathname.slice(3) : pathname;
+      return actualPath.match(/^\/(?:i|r)\/[a-zA-Z0-9]+$/) !== null;
+    })();
 
   const ensureValidName = useCallback(() => {
     const result = normalizeDisplayName(room.displayName);
@@ -86,8 +90,9 @@ export const App = () => {
     if (initialPathHandledRef.current) return;
 
     const pathname = window.location.pathname;
+    const actualPath = pathname.startsWith('/?/') ? pathname.slice(3) : pathname;
 
-    const legacyInviteMatch = pathname.match(/^\/r\/([a-zA-Z0-9]+)$/);
+    const legacyInviteMatch = actualPath.match(/^\/r\/([a-zA-Z0-9]+)$/);
     if (legacyInviteMatch) {
       const roomIdFromUrl = legacyInviteMatch[1];
       if (room.roomId) {
@@ -104,7 +109,7 @@ export const App = () => {
       return;
     }
 
-    const inviteMatch = pathname.match(/^\/i\/([a-zA-Z0-9]+)$/);
+    const inviteMatch = actualPath.match(/^\/i\/([a-zA-Z0-9]+)$/);
     if (inviteMatch) {
       const roomIdFromUrl = inviteMatch[1];
       if (room.roomId) {
@@ -120,7 +125,7 @@ export const App = () => {
       return;
     }
 
-    const gameRoomMatch = pathname.match(/^\/room\/([a-zA-Z0-9]+)$/);
+    const gameRoomMatch = actualPath.match(/^\/room\/([a-zA-Z0-9]+)$/);
     if (gameRoomMatch) {
       const roomIdFromUrl = gameRoomMatch[1];
 
