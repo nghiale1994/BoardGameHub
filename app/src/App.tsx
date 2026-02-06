@@ -49,7 +49,7 @@ export const App = () => {
     typeof window !== "undefined" && (() => {
       const pathname = window.location.pathname;
       const actualPath = pathname.replace('/?/', '/');
-      return actualPath.match(/^\/(?:i|r)\/[a-zA-Z0-9]+$/) !== null;
+      return actualPath.match(/(?:i|r)\/[a-zA-Z0-9]+$/) !== null;
     })();
 
   const ensureValidName = useCallback(() => {
@@ -90,37 +90,67 @@ export const App = () => {
     if (initialPathHandledRef.current) return;
 
     const pathname = window.location.pathname;
-    const actualPath = pathname.replace('/?/', '/');
+    const search = window.location.search;
+    let actualPath = pathname;
+    if (search.startsWith('?/')) {
+      actualPath = search.slice(1);
+    }
+    actualPath = actualPath.replace('/?/', '/');
 
-    const legacyInviteMatch = actualPath.match(/^\/r\/([a-zA-Z0-9]+)$/);
+    const legacyInviteMatch = actualPath.match(/\/r\/([a-zA-Z0-9]+)$/);
     if (legacyInviteMatch) {
       const roomIdFromUrl = legacyInviteMatch[1];
       if (room.roomId) {
+        const confirmed = window.confirm("You're currently in a room. Do you want to leave and join a new room?");
+        if (!confirmed) {
+          window.history.replaceState({}, "", "/");
+          initialPathHandledRef.current = true;
+          return;
+        }
         room.leaveRoom();
         setDeferRoomView(false);
       }
       window.history.replaceState({}, "", `/i/${roomIdFromUrl}`);
       setJoinInitialUrl(buildShareUrl(roomIdFromUrl));
       setJoinAutoFocus(true);
-      window.setTimeout(() => {
-        document.getElementById("join-room")?.scrollIntoView({ behavior: "smooth", block: "start" });
-      }, 0);
+      // Delay scroll to ensure component is mounted
+      requestAnimationFrame(() => {
+        setTimeout(() => {
+          const element = document.getElementById("join-room");
+          if (element) {
+            element.scrollIntoView({ behavior: "smooth", block: "center" });
+          }
+        }, 100);
+      });
       initialPathHandledRef.current = true;
       return;
     }
 
-    const inviteMatch = actualPath.match(/^\/i\/([a-zA-Z0-9]+)$/);
+    const inviteMatch = actualPath.match(/\/i\/([a-zA-Z0-9]+)$/);
     if (inviteMatch) {
       const roomIdFromUrl = inviteMatch[1];
       if (room.roomId) {
+        const confirmed = window.confirm("You're currently in a room. Do you want to leave and join a new room?");
+        if (!confirmed) {
+          window.history.replaceState({}, "", "/");
+          initialPathHandledRef.current = true;
+          return;
+        }
         room.leaveRoom();
         setDeferRoomView(false);
       }
+      window.history.replaceState({}, "", `/i/${roomIdFromUrl}`);
       setJoinInitialUrl(buildShareUrl(roomIdFromUrl));
       setJoinAutoFocus(true);
-      window.setTimeout(() => {
-        document.getElementById("join-room")?.scrollIntoView({ behavior: "smooth", block: "start" });
-      }, 0);
+      // Delay scroll to ensure component is mounted
+      requestAnimationFrame(() => {
+        setTimeout(() => {
+          const element = document.getElementById("join-room");
+          if (element) {
+            element.scrollIntoView({ behavior: "smooth", block: "center" });
+          }
+        }, 100);
+      });
       initialPathHandledRef.current = true;
       return;
     }

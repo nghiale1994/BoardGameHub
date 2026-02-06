@@ -1,6 +1,7 @@
 NOTE: AI must read docs/ai/README.md before modifying this file.
-Version: 2026-02-04
+Version: 2026-02-06
 Changelog:
+- 2026-02-06: Added E2E test case for GitHub Pages SPA redirect link handling in JoinRoom component.
 - 2026-01-31: Added spectator mode checkbox, invite URL auto-paste behavior.
 - 2026-02-02: Joining requires a valid saved display name (no empty / no quotes-only like "\"\"").
 - 2026-02-02: Clarified invite URL behavior is prefill + scroll (no auto-join).
@@ -114,7 +115,8 @@ sequenceDiagram
 
 | Component | Purpose / Context | Test Steps | Expected Result |
 |----------|-------------------|------------|----------------|
-| Join from invite | Real browser scroll + focus behavior | E2E (Playwright) — proposed; not yet implemented in repo | Opening invite link scrolls to JoinRoom and pre-fills URL |
+| Join from invite | Real browser scroll + focus behavior | E2E (Playwright): goto /i/ROOMID → assert scroll to JoinRoom → assert URL prefilled + focused (Coverage: `app/e2e/homepage.spec.ts`) | Invite link opens, scrolls to JoinRoom, pre-fills URL, focuses input |
+| Join from redirected invite | GitHub Pages SPA redirect handling | E2E (Playwright): goto / ? /i/ROOMID → assert URL normalizes to /i/ROOMID → assert JoinRoom prefill + focus → click Join → assert room joined (Coverage: `app/e2e/homepage.spec.ts`) | Redirected invite URLs work end-to-end, joining room successfully |
 
 Notes
 - Use MUI `TextField` and `Button`.

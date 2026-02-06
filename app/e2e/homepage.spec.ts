@@ -78,6 +78,43 @@ test("invite route pre-fills JoinRoom input and focuses it", async ({ page }) =>
   await expect(input).toBeFocused();
 });
 
+// Tests: redirected invite route (GitHub Pages SPA) pre-fills JoinRoom input and focuses it.
+// Steps:
+// 1) goto /?/i/:id (redirected URL)
+// 2) assert URL normalizes to /i/:id
+// 3) assert JoinRoom input value ends with /i/:id
+// 4) assert JoinRoom input is focused
+test("redirected invite route pre-fills JoinRoom input and focuses it", async ({ page }) => {
+  const label = "redirected-invite-prefill";
+
+  // Step 1) goto /?/i/:id (redirected URL)
+  await markBehavior(page, label, "goto /?/i/DEF456");
+  await page.goto("/?/i/DEF456");
+  await page.waitForLoadState('networkidle');
+
+  // Step 2) assert URL normalizes to /i/:id
+  await markBehavior(page, label, "assert URL normalized");
+  const pathname = await page.evaluate(() => window.location.pathname);
+  console.log('pathname:', pathname);
+  await expect(page).toHaveURL(/\/i\/DEF456$/);
+
+  const input = page.getByPlaceholder("Paste room URL");
+
+  // Wait for component to update
+  await page.waitForTimeout(1000);
+
+  // Debug
+  const value = await page.evaluate(() => (document.querySelector('input[placeholder="Paste room URL"]') as HTMLInputElement)?.value);
+  console.log('Input value:', value);
+
+  // Step 3) assert JoinRoom input value ends with /i/:id
+  await markBehavior(page, label, "assert input prefilled + focused");
+  await expect(input).toHaveValue(/\/i\/DEF456$/);
+
+  // Step 4) assert JoinRoom input is focused
+  await expect(input).toBeFocused();
+});
+
 // Tests: name gate blocks join when display name is empty.
 // Steps:
 // 1) goto /
