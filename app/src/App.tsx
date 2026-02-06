@@ -132,12 +132,7 @@ export const App = () => {
     if (inviteMatch) {
       const roomIdFromUrl = inviteMatch[1];
       if (room.roomId) {
-        const confirmed = window.confirm(t('navigation.leave_room_confirm'));
-        if (!confirmed) {
-          window.history.replaceState({}, "", `${basePath}/`);
-          initialPathHandledRef.current = true;
-          return;
-        }
+        // Always leave current room when accessing invite URL
         room.leaveRoom();
         setDeferRoomView(false);
       }

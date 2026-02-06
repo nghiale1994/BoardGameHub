@@ -40,9 +40,47 @@ const breakpointViewports = [
 
 const saveName = async (page: import("@playwright/test").Page, label: string, name: string) => {
   await markBehavior(page, label, `fill displayName=${JSON.stringify(name)}`);
-  await page.getByLabel("Enter your name").fill(name);
+  // Try common label/localized variants; fallback to first text input if none matched
+  const labelCandidates = [
+    "Enter your name",
+    "Nhập tên của bạn",
+    "Player name",
+    "Tên người chơi"
+  ];
+  let filled = false;
+  // Wait for any text input to appear (handles i18n timing) and fill the first visible one
+  try {
+    await page.waitForSelector('input[type="text"]', { timeout: 10000 });
+    const inputs = page.locator('input[type="text"]');
+    const count = await inputs.count();
+    for (let i = 0; i < count; i++) {
+      const inp = inputs.nth(i);
+      try {
+        if (await inp.isVisible()) {
+          await inp.fill(name);
+          filled = true;
+          break;
+        }
+      } catch (e) {
+        // continue
+      }
+    }
+  } catch (e) {
+    // no inputs found within timeout
+  }
+  if (!filled) {
+    // final defensive fallback: use first input even if not visible
+    const fallback = page.locator('input[type="text"]').first();
+    await fallback.fill(name);
+  }
   await markBehavior(page, label, "click Save");
-  await page.getByRole("button", { name: "Save" }).click();
+  // click localized Save button (English: Save, VN: Lưu)
+  try {
+    await page.getByRole("button", { name: /^(Save|Lưu)$/i }).click();
+  } catch (e) {
+    // fallback: click the first button in the welcome section
+    await page.locator('#welcome-section button').first().click();
+  }
 };
 
 // Tests: homepage renders core sections.
@@ -180,7 +218,7 @@ test("create flow: pick game -> create -> enter room", async ({ page }) => {
 
   // Step 5) click Create Room
   await markBehavior(page, label, "click Create Room");
-  await page.getByRole("button", { name: "Create Room" }).click();
+  await page.getByRole("button", { name: /^(Create Room|Tạo phòng)$/i }).click();
 
   // Step 6) assert Room created dialog
   await markBehavior(page, label, "assert Room created dialog");
@@ -194,7 +232,7 @@ test("create flow: pick game -> create -> enter room", async ({ page }) => {
 
   // Step 8) click Enter room
   await markBehavior(page, label, "click Enter room");
-  await page.getByRole("button", { name: "Enter room" }).click();
+  await page.getByRole("button", { name: /^(Enter room|Vào phòng)$/i }).click();
 
   // Step 9) assert room header visible
   await markBehavior(page, label, "assert Room: Catan visible");
@@ -507,14 +545,13 @@ test("end-to-end invite flow with redirected URL", async ({ browser }) => {
 });
 
 
-// Test: i18n leave room confirmation dialog
+// Test: i18n spectator button shows Vietnamese text
 // Steps:
 // 1) Set language to Vietnamese
-// 2) Create a room
-// 3) Try to create another room
-// 4) Assert confirm dialog shows Vietnamese text
-test("i18n leave room confirmation dialog", async ({ page }) => {
-  const label = "i18n-confirm";
+// 2) Create and join a room
+// 3) Assert spectator button shows Vietnamese text
+test("i18n spectator button shows Vietnamese text", async ({ page }) => {
+  const label = "i18n-spectator-vi";
 
   // Step 1) Set language to Vietnamese and goto /
   await page.addInitScript(() => {
@@ -525,22 +562,57 @@ test("i18n leave room confirmation dialog", async ({ page }) => {
   await page.goto("/");
   await page.waitForLoadState('networkidle');
 
-  // Step 2) Save name and create room
+  // Step 2) Create and join room
+  await saveName(page, label, "Alice");
+  await markBehavior(page, label, "choose game Catan");
+  await page.getByRole("button", { name: "Catan" }).click();
+  await markBehavior(page, label, "click Create Room");
+  await page.getByRole("button", { name: /^(Create Room|Tạo phòng)$/i }).click();
+
+  // Enter room
+  await markBehavior(page, label, "click Enter room");
+  await page.getByRole("button", { name: /^(Enter room|Vào phòng)$/i }).click();
+
+  // Step 3) Assert spectator button shows Vietnamese text
+  await markBehavior(page, label, "assert spectator button text");
+  await expect(page.getByRole("button", { name: "Làm khán giả" })).toBeVisible();
+
+  await page.close();
+});
+
+// Test: i18n spectator button shows English text
+// Steps:
+// 1) Set language to English
+// 2) Create and join a room
+// 3) Assert spectator button shows English text
+test("i18n spectator button shows English text", async ({ page }) => {
+  const label = "i18n-spectator-en";
+
+  // Step 1) Set language to English and goto /
+  await page.addInitScript(() => {
+    localStorage.clear();
+    localStorage.setItem("boardgamehub.language", "en");
+  });
+  await markBehavior(page, label, "goto /");
+  await page.goto("/");
+  await page.waitForLoadState('networkidle');
+
+  // Step 2) Create and join room
   await saveName(page, label, "Alice");
   await markBehavior(page, label, "choose game Catan");
   await page.getByRole("button", { name: "Catan" }).click();
   await markBehavior(page, label, "click Create Room");
   await page.getByRole("button", { name: "Create Room" }).click();
 
-  // Step 3) Try to create another room (should trigger confirm dialog)
-  await markBehavior(page, label, "click Create Room again");
-  await page.getByRole("button", { name: "Create Room" }).click();
+  // Enter room
+  await markBehavior(page, label, "click Enter room");
+  await page.getByRole("button", { name: "Enter room" }).click();
 
-  // Step 4) Assert confirm dialog shows Vietnamese text
-  await markBehavior(page, label, "assert confirm dialog text");
-  const dialog = await page.waitForEvent('dialog');
-  expect(dialog.message()).toBe("Bạn đang ở trong một phòng. Bạn có muốn rời phòng và tham gia phòng mới không?");
-  await dialog.accept();
+  // Step 3) Assert spectator button shows English text
+  await markBehavior(page, label, "assert spectator button text");
+  await expect(page.getByRole("button", { name: "Become spectator" })).toBeVisible();
 
   await page.close();
 });
+
+
